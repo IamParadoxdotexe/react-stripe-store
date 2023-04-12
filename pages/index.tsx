@@ -11,6 +11,23 @@ import styles from './index.module.scss';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>();
+  const [productPriceId, setProductPriceId] = useState<string>();
+
+  function onCheckout() {
+    fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        priceId: productPriceId
+      })
+    })
+      .then(res => res.json())
+      .then(({ url }) => {
+        window.location = url;
+      });
+  }
 
   useEffect(() => {
     fetch('/api/products')
@@ -23,15 +40,26 @@ export default function Home() {
       {products && (
         <div className={styles.products}>
           {products?.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={() => setProductPriceId(product.price.id)}
+            />
           ))}
         </div>
       )}
-      <form className={styles.checkout} action="/api/checkout">
-        <Button variant="contained" startIcon={<ShoppingCartOutlined />} type="submit">
+
+      <div className={styles.checkout}>
+        <Button
+          variant="contained"
+          startIcon={<ShoppingCartOutlined />}
+          type="submit"
+          disabled={!productPriceId}
+          onClick={onCheckout}
+        >
           Checkout
         </Button>
-      </form>
+      </div>
     </>
   );
 }

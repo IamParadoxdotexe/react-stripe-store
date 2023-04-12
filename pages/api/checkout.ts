@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        price: 'price_1MvsEdJBo0rY11ssmC4ehhiG',
+        price: req.body.priceId,
         quantity: 1
       }
     ],
@@ -20,5 +20,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     cancel_url: `${YOUR_DOMAIN}`
   });
 
-  res.redirect(303, session.url || '');
+  res.status(201).json({ url: session.url });
 }

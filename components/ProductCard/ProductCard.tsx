@@ -10,6 +10,7 @@ import styles from './ProductCard.module.scss';
 
 type ProductCardProps = {
   product: Product;
+  onAddToCart?: () => void;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
@@ -30,7 +31,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
 
       <div className={styles.product__price}>
         {`$${props.product.price.amount}`}
-        <Button startIcon={<AddShoppingCartOutlined />} size="small">
+        <Button startIcon={<AddShoppingCartOutlined />} size="small" onClick={props.onAddToCart}>
           Add to cart
         </Button>
       </div>
