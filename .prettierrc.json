@@ -2,5 +2,7 @@
   "singleQuote": true,
   "printWidth": 100,
   "trailingComma": "none",
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "importOrder": ["^@mui/(.*)$", "^[./]"],
+  "importOrderSeparation": true
 }
