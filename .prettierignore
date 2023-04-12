@@ -1,4 +1,6 @@
 .husky
 .next
+out
 node_modules
+.env
 package-lock.json

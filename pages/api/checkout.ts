@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const YOUR_DOMAIN = 'http://localhost:3000';
 
@@ -8,13 +8,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        price: '{{PRICE_ID}}',
+        price: 'price_1MvsEdJBo0rY11ssmC4ehhiG',
         quantity: 1
       }
     ],
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`
+    success_url: `${YOUR_DOMAIN}`,
+    cancel_url: `${YOUR_DOMAIN}`
   });
 
   res.redirect(303, session.url);
