@@ -1,0 +1,39 @@
+.product {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: fit-content;
+
+  .product__image {
+    background-color: #eee;
+    border-radius: 8px;
+    object-fit: contain;
+    padding: 16px;
+  }
+
+  .product__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.25;
+
+    .info__title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .info__subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: #777;
+    }
+  }
+
+  .product__price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 500;
+  }
+}

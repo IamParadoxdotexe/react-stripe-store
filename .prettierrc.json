@@ -3,6 +3,6 @@
   "printWidth": 100,
   "trailingComma": "none",
   "arrowParens": "avoid",
-  "importOrder": ["^@mui/(.*)$", "^[./]"],
+  "importOrder": ["^@/pages/api/(.*)$", "^@mui/(.*)$", "^@/components/(.*)$", "^[./]"],
   "importOrderSeparation": true
 }

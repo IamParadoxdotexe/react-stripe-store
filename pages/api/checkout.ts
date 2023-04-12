@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import Stripe from 'stripe';
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2022-11-15'
+});
 
 const YOUR_DOMAIN = 'http://localhost:3000';
 
@@ -17,5 +20,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     cancel_url: `${YOUR_DOMAIN}`
   });
 
-  res.redirect(303, session.url);
+  res.redirect(303, session.url || '');
 }
