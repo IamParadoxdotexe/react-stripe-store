@@ -15,11 +15,9 @@ type ProductUpdatedData = {
 export const handleProductUpdated = async (data: ProductUpdatedData) => {
   const rawProduct = data.object;
 
-  // get price amount if needed
-  if (data.previous_attributes.default_price) {
-    const price = await stripe.prices.retrieve(data.object.default_price as string);
-    rawProduct.default_price = price;
-  }
+  // get expanded price w/ amount
+  const price = await stripe.prices.retrieve(data.object.default_price as string);
+  rawProduct.default_price = price;
 
   const product = parseRawProduct(rawProduct);
 
