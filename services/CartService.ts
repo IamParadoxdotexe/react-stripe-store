@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { Product } from '@/pages/api/products';
+import { Product } from '@/pages/api/stripe/products';
 
 export type Cart = {
   [priceId: string]: number;
@@ -21,7 +21,7 @@ export const CartService = new (class {
   }
 
   public checkout() {
-    fetch('/api/checkout', {
+    fetch('/api/stripe/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

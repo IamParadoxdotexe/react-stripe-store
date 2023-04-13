@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
-import { Product } from '@/pages/api/products';
+import { Product } from '@/pages/api/stripe/products';
 import { getAppConfig } from '@/utils/functions/getConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { CartService } from '@/services/CartService';
