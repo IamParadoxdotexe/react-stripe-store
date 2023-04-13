@@ -1,9 +1,15 @@
 .products {
-  padding: 32px;
   display: flex;
   gap: 48px;
 }
 
-.checkout {
-  padding: 32px;
+.home {
+  @include mix-framework;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+
+  button {
+    width: fit-content;
+  }
 }

@@ -1,0 +1,27 @@
+.navBar {
+  @include mix-framework-extended;
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+
+  .navBar__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .right__search {
+      background-color: color-light(2);
+      border-radius: $border-radius;
+
+      svg {
+        color: color-light(6);
+      }
+
+      fieldset {
+        border: none;
+      }
+    }
+  }
+}

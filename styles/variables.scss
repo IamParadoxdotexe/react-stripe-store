@@ -1,0 +1,13 @@
+$border-radius: 6px;
+
+@mixin mix-framework {
+  max-width: 1200px + 48px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@mixin mix-framework-extended {
+  max-width: 1400px + 48px;
+  margin: 0 auto;
+  padding: 0 24px;
+}

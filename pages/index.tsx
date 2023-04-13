@@ -32,7 +32,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <div className={styles.home}>
       {products && (
         <div className={styles.products}>
           {products?.map(product => (
@@ -45,17 +45,15 @@ export default function Home() {
         </div>
       )}
 
-      <div className={styles.checkout}>
-        <Button
-          variant="contained"
-          startIcon={<ShoppingCartOutlined />}
-          type="submit"
-          disabled={!productPriceId}
-          onClick={onCheckout}
-        >
-          Checkout
-        </Button>
-      </div>
-    </>
+      <Button
+        variant="contained"
+        startIcon={<ShoppingCartOutlined />}
+        type="submit"
+        disabled={!productPriceId}
+        onClick={onCheckout}
+      >
+        Checkout
+      </Button>
+    </div>
   );
 }

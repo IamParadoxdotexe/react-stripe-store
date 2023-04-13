@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { getStyleExports } from '@/utils/functions/getStyleExports';
 import { createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
+import { NavBar } from '@/components/NavBar/NavBar';
 import styles from './app.module.scss';
 
 const styleExports = getStyleExports();
@@ -39,6 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <main id={styles.app} className={`${inter.className}`}>
+        <NavBar />
         <Component {...pageProps} />
       </main>
     </ThemeProvider>
