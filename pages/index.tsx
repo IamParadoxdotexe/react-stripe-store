@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
-
 import { Product } from '@/pages/api/products';
-
 import { ShoppingCartOutlined } from '@mui/icons-material';
 import Button from '@mui/material/Button';
-
 import { ProductCard } from '@/components/ProductCard/ProductCard';
-
 import styles from './index.module.scss';
 
 export default function Home() {

@@ -3,6 +3,12 @@
   "printWidth": 100,
   "trailingComma": "none",
   "arrowParens": "avoid",
-  "importOrder": ["^@/pages/api/(.*)$", "^@mui/(.*)$", "^@/components/(.*)$", "^[./]"],
-  "importOrderSeparation": true
+  "importOrder": [
+    "^@/config.json$",
+    "^@/utils/(.*)$",
+    "^@/pages/api/(.*)$",
+    "^@mui/(.*)$",
+    "^@/components/(.*)$",
+    "^[./]"
+  ]
 }

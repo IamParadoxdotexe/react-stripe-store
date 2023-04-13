@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
-
 import { createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
