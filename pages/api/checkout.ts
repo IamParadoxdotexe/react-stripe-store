@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import { getAppConfig } from '@/utils/functions/getConfig';
+import { Cart } from '@/services/CartService';
 
 const appConfig = getAppConfig();
 
@@ -8,14 +9,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2022-11-15'
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+interface CheckoutRequest extends NextApiRequest {
+  body: Cart;
+}
+
+export default async function handler(req: CheckoutRequest, res: NextApiResponse) {
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
-    line_items: [
-      {
-        price: req.body.priceId,
-        quantity: 1
-      }
-    ],
+    line_items: Object.entries(req.body).map(([price, quantity]) => ({
+      price,
+      quantity
+    })),
     mode: 'payment',
     success_url: appConfig.checkout.successUrl,
     cancel_url: appConfig.checkout.errorUrl

@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { CartService } from '@/services/CartService';
 import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 import { Badge, IconButton, InputAdornment, TextField } from '@mui/material';
 import styles from './NavBar.module.scss';
 
 export const NavBar: React.FC = () => {
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    CartService.cartCount.subscribe(setCartCount);
+  });
+
   return (
     <div className={styles.navBar}>
       Business Name
@@ -21,8 +28,8 @@ export const NavBar: React.FC = () => {
           color="secondary"
           className={styles.right__search}
         />
-        <IconButton color="secondary">
-          <Badge badgeContent={10} color="primary">
+        <IconButton color="secondary" onClick={() => cartCount && CartService.checkout()}>
+          <Badge badgeContent={cartCount} color="primary">
             <ShoppingCartOutlined />
           </Badge>
         </IconButton>

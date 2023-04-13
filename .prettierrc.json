@@ -4,8 +4,9 @@
   "trailingComma": "none",
   "arrowParens": "avoid",
   "importOrder": [
-    "^@/utils/(.*)$",
     "^@/pages/api/(.*)$",
+    "^@/utils/(.*)$",
+    "^@/services/(.*)$",
     "^@mui/(.*)$",
     "^@/components/(.*)$",
     "^[./]"

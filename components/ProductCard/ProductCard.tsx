@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import React from 'react';
+import { Product } from '@/pages/api/products';
 import { getAppConfig } from '@/utils/functions/getConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
-import { Product } from '@/pages/api/products';
+import { CartService } from '@/services/CartService';
 import { AddShoppingCartOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import styles from './ProductCard.module.scss';
@@ -11,7 +12,6 @@ const appConfig = getAppConfig();
 
 type ProductCardProps = {
   product: Product;
-  onAddToCart?: () => void;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
@@ -35,7 +35,11 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
 
       <div className={styles.product__price}>
         {`$${props.product.price.amount}`}
-        <Button startIcon={<AddShoppingCartOutlined />} size="small" onClick={props.onAddToCart}>
+        <Button
+          startIcon={<AddShoppingCartOutlined />}
+          size="small"
+          onClick={() => CartService.addToCart(props.product, 1)}
+        >
           Add to cart
         </Button>
       </div>
