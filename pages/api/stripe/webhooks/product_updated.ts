@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
-import { StripeEvent } from '@/utils/types/StripeEvent';
+import { parseRawProduct } from '@/pages/api/stripe/products';
+import { PusherEvent } from '@/utils/types/PusherEvent';
 import { pusher } from '.';
-import { parseRawProduct } from '../products';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2022-11-15'
@@ -23,5 +23,5 @@ export const handleProductUpdated = async (data: ProductUpdatedData) => {
 
   const product = parseRawProduct(rawProduct);
 
-  pusher.trigger('stripe', StripeEvent.PRODUCT_UPDATED, product);
+  pusher.trigger('main', PusherEvent.PRODUCT_UPDATED, product);
 };
