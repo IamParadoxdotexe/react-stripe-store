@@ -1,0 +1,15 @@
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.125rem;
+
+@mixin text-primary {
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: color-dark(1);
+}
+
+@mixin text-secondary {
+  font-size: $font-size-md;
+  font-weight: 500;
+  color: color-dark(8);
+}

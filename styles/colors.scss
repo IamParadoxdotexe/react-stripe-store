@@ -1,0 +1,41 @@
+$_black: #121212;
+$_white: #fefefe;
+$_primary: #e54b4b;
+$_secondary: #434d58;
+
+$_color-step: 6%;
+
+$palettes: 'light', 'dark', 'primary', 'secondary';
+
+// neutrals
+@function _color-neutral-amount($i) {
+  @return min(($i - 1), 8) * $_color-step;
+}
+
+@function color-dark($i) {
+  @return lighten($_black, _color-neutral-amount($i));
+}
+
+@function color-light($i) {
+  @return darken($_white, _color-neutral-amount($i));
+}
+
+// hues
+$_normal_hue_index: 5;
+
+@function _color-hue($hue, $i) {
+  // darker hues
+  @if $i < $_normal_hue_index {
+    @return darken($hue, ($_normal_hue_index - $i) * $_color-step);
+  }
+  // normal and lighter hues
+  @return lighten($hue, (min($i, 10) - $_normal_hue_index) * $_color-step);
+}
+
+@function color-primary($i) {
+  @return _color-hue($_primary, $i);
+}
+
+@function color-secondary($i) {
+  @return _color-hue($_secondary, $i);
+}

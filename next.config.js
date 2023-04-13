@@ -8,6 +8,9 @@ const nextConfig = {
         hostname: 'files.stripe.com'
       }
     ]
+  },
+  sassOptions: {
+    prependData: `@import "./styles/_import.scss";`
   }
 };
 

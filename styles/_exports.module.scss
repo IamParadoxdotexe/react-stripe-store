@@ -1,0 +1,13 @@
+@import 'colors';
+
+:export {
+  palettes: $palettes;
+  light: color-light(1);
+  dark: color-dark(1);
+  primary: color-primary(5);
+  primaryLight: color-primary(7);
+  primaryDark: color-primary(3);
+  secondary: color-secondary(5);
+  secondaryLight: color-secondary(7);
+  secondaryDark: color-secondary(3);
+}

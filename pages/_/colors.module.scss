@@ -1,0 +1,21 @@
+.palettes {
+  display: flex;
+  flex-direction: column;
+
+  .palette {
+    display: flex;
+
+    div {
+      width: 100px;
+      height: 100px;
+    }
+
+    @each $palette in $palettes {
+      @for $i from 1 through 10 {
+        .#{$palette}-#{$i} {
+          background-color: call('color-' + $palette, $i);
+        }
+      }
+    }
+  }
+}

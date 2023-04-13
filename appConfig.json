@@ -8,6 +8,6 @@
   },
   "product": {
     "titleKey": "name",
-    "subtitleKey": "metadata.type"
+    "subtitleKey": "metadata.descriptor"
   }
 }

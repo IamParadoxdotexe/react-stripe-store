@@ -5,7 +5,7 @@
   width: fit-content;
 
   .product__image {
-    background-color: #eee;
+    background-color: color-light(2);
     border-radius: 8px;
     object-fit: contain;
     padding: 16px;
@@ -18,14 +18,11 @@
     line-height: 1.25;
 
     .info__title {
-      font-size: 18px;
-      font-weight: 700;
+      @include text-primary;
     }
 
     .info__subtitle {
-      font-size: 16px;
-      font-weight: 500;
-      color: #777;
+      @include text-secondary;
     }
   }
 
