@@ -1,0 +1,13 @@
+{
+  "checkout": {
+    "successUrl": "http://localhost:3000",
+    "errorUrl": "http://localhost:3000",
+    "shipping": {
+      "countries": ["US"]
+    }
+  },
+  "product": {
+    "titleKey": "name",
+    "subtitleKey": "metadata.type"
+  }
+}

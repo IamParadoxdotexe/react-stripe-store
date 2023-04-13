@@ -4,7 +4,6 @@
   "trailingComma": "none",
   "arrowParens": "avoid",
   "importOrder": [
-    "^@/config.json$",
     "^@/utils/(.*)$",
     "^@/pages/api/(.*)$",
     "^@mui/(.*)$",

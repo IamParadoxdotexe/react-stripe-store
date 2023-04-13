@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import React from 'react';
-import config from '@/config.json';
+import { getAppConfig } from '@/utils/functions/getConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { Product } from '@/pages/api/products';
 import { AddShoppingCartOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import styles from './ProductCard.module.scss';
+
+const appConfig = getAppConfig();
 
 type ProductCardProps = {
   product: Product;
@@ -13,8 +15,8 @@ type ProductCardProps = {
 };
 
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
-  const title = getNestedKey(props.product, config.product.titleKey);
-  const subtitle = getNestedKey(props.product, config.product.subtitleKey);
+  const title = getNestedKey(props.product, appConfig.product.titleKey);
+  const subtitle = getNestedKey(props.product, appConfig.product.subtitleKey);
 
   return (
     <div className={styles.product}>
