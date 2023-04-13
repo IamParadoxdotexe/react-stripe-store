@@ -10,5 +10,9 @@
     "titleKey": "name",
     "subtitleKey": "metadata.descriptor",
     "stockKey": "metadata.stock"
+  },
+  "pusher": {
+    "appId": "1584134",
+    "cluster": "us2"
   }
 }

@@ -1,4 +1,6 @@
 import Stripe from 'stripe';
+import { StripeEvent } from '@/utils/types/StripeEvent';
+import { pusher } from '.';
 import { parseRawProduct } from '../products';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -20,5 +22,6 @@ export const handleProductUpdated = async (data: ProductUpdatedData) => {
   }
 
   const product = parseRawProduct(rawProduct);
-  console.log(product);
+
+  pusher.trigger('stripe', StripeEvent.PRODUCT_UPDATED, product);
 };

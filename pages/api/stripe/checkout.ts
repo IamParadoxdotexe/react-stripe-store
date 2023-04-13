@@ -1,9 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
-import { getAppConfig } from '@/utils/functions/getConfig';
+import appConfig from '@/utils/constants/appConfig';
 import { Cart } from '@/services/CartService';
-
-const appConfig = getAppConfig();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2022-11-15'

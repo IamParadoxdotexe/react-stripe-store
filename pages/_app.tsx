@@ -1,7 +1,9 @@
 import { ThemeProvider } from '@emotion/react';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
+import { useEffect } from 'react';
 import { getStyleExports } from '@/utils/functions/getStyleExports';
+import { PusherService } from '@/services/PusherService';
 import { createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { NavBar } from '@/components/NavBar/NavBar';
@@ -36,6 +38,12 @@ const theme = createTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    PusherService.bind();
+
+    return () => PusherService.unbind();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

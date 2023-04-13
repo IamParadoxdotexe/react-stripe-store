@@ -1,14 +1,12 @@
 import Image from 'next/image';
 import React from 'react';
 import { Product } from '@/pages/api/stripe/products';
-import { getAppConfig } from '@/utils/functions/getConfig';
+import appConfig from '@/utils/constants/appConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { CartService } from '@/services/CartService';
 import { AddShoppingCartOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import styles from './ProductCard.module.scss';
-
-const appConfig = getAppConfig();
 
 type ProductCardProps = {
   product: Product;

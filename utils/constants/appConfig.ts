@@ -13,9 +13,10 @@ type AppConfig = {
     titleKey: string;
     subtitleKey: string;
   };
+  pusher: {
+    appId: string;
+    cluster: string;
+  };
 };
 
-/**
- * Get app configuration.
- */
-export const getAppConfig = () => appConfig as AppConfig;
+export default appConfig as AppConfig;
