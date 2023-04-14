@@ -17,4 +17,13 @@ export const ProductService = new (class {
       this.products.next([...this.products.value]);
     }
   }
+
+  public onProductCreated(product: Product) {
+    this.products.value.push(product);
+    this.products.next([...this.products.value]);
+  }
+
+  public onProductDeleted(productId: string) {
+    this.products.next([...this.products.value.filter(p => p.id === productId)]);
+  }
 })();

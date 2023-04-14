@@ -1,7 +1,8 @@
-import { handleCheckoutSessionCompleted } from '@/webooks/handleCheckoutSessionCompleted';
-import { handleProductUpdated } from '@/webooks/handleProductUpdated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Pusher from 'pusher';
+import { handleCheckoutSessionCompleted } from '@/webhooks/handleCheckoutSessionCompleted';
+import { handleProductDeleted } from '@/webhooks/handleProductDeleted';
+import { handleProductUpdated } from '@/webhooks/handleProductUpdated';
 import appConfig from '@/utils/constants/appConfig';
 
 export const pusher = new Pusher({
@@ -18,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const webhookHandlers: { [type: string]: (data: any) => void } = {
-  'product.updated': handleProductUpdated,
+  'product.updated': data => handleProductUpdated({ ...data, created: false }),
+  'product.created': data => handleProductUpdated({ ...data, created: true }),
+  'product.deleted': handleProductDeleted,
   'checkout.session.completed': handleCheckoutSessionCompleted
 };

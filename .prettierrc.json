@@ -4,7 +4,9 @@
   "trailingComma": "none",
   "arrowParens": "avoid",
   "importOrder": [
+    "<THIRD_PARTY_MODULES>",
     "^@/pages/api/(.*)$",
+    "^@/webhooks/(.*)$",
     "^@/utils/(.*)$",
     "^@/services/(.*)$",
     "^@mui/(.*)$",

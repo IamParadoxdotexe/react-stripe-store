@@ -10,9 +10,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 type ProductUpdatedData = {
   object: Stripe.Product;
   previous_attributes: { [key in keyof Stripe.Product]: string };
+  created: boolean;
 };
 
-export const handleProductUpdated = async ({ object: rawProduct }: ProductUpdatedData) => {
+export const handleProductUpdated = async ({ object: rawProduct, created }: ProductUpdatedData) => {
   // get expanded price w/ amount
   if (rawProduct.default_price) {
     const price = await stripe.prices.retrieve(rawProduct.default_price as string);
@@ -21,5 +22,9 @@ export const handleProductUpdated = async ({ object: rawProduct }: ProductUpdate
 
   const product = parseRawProduct(rawProduct);
 
-  pusher.trigger('main', PusherEvent.PRODUCT_UPDATED, product);
+  pusher.trigger(
+    'main',
+    created ? PusherEvent.PRODUCT_CREATED : PusherEvent.PRODUCT_UPDATED,
+    product
+  );
 };

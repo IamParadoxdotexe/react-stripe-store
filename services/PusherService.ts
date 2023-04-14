@@ -9,14 +9,16 @@ const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY || '', {
 
 const mainChannel = pusher.subscribe('main');
 
-const pusherHandlers: { [type: string]: (data: any) => void } = {
-  [PusherEvent.PRODUCT_UPDATED]: products => ProductService.onProductUpdated(products)
+const pusherHandlers: { [key in PusherEvent]: (data: any) => void } = {
+  [PusherEvent.PRODUCT_UPDATED]: product => ProductService.onProductUpdated(product),
+  [PusherEvent.PRODUCT_CREATED]: product => ProductService.onProductCreated(product),
+  [PusherEvent.PRODUCT_DELETED]: productId => ProductService.onProductDeleted(productId)
 };
 
 export const PusherService = new (class {
   public bind() {
-    for (const key of Object.keys(pusherHandlers)) {
-      mainChannel.bind(key, pusherHandlers[key]);
+    for (const event of Object.keys(PusherEvent)) {
+      mainChannel.bind(event, pusherHandlers[event as PusherEvent]);
     }
   }
 
