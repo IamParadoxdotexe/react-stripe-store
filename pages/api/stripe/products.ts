@@ -29,12 +29,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 export const parseRawProduct = (rawProduct: Stripe.Product) => {
-  const rawPrice = rawProduct.default_price as Stripe.Price;
+  const rawPrice = rawProduct.default_price as Stripe.Price | undefined;
+
   return {
     id: rawProduct.id,
     price: {
-      id: rawPrice.id,
-      amount: rawPrice.unit_amount ? rawPrice.unit_amount / 100 : 0
+      id: rawPrice?.id ?? '',
+      amount: rawPrice?.unit_amount ? rawPrice.unit_amount / 100 : 0
     },
     name: rawProduct.name,
     images: rawProduct.images,

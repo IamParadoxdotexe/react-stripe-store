@@ -5,7 +5,7 @@ export const ProductService = new (class {
   public products = new BehaviorSubject<Product[]>([]);
 
   constructor() {
-    fetch('/api/stripe/products')
+    fetch('http://localhost:3000/api/stripe/products')
       .then(res => res.json())
       .then(products => this.products.next(products));
   }

@@ -21,7 +21,7 @@ export const CartService = new (class {
   }
 
   public checkout() {
-    fetch('/api/stripe/checkout', {
+    fetch('http://localhost:3000/api/stripe/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

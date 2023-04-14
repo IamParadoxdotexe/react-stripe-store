@@ -15,7 +15,8 @@ export default async function handler(req: CheckoutRequest, res: NextApiResponse
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     line_items: Object.entries(req.body).map(([price, quantity]) => ({
       price,
-      quantity
+      quantity,
+      adjustable_quantity: { enabled: true }
     })),
     mode: 'payment',
     success_url: appConfig.checkout.successUrl,

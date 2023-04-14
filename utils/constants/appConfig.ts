@@ -12,6 +12,7 @@ type AppConfig = {
   product: {
     titleKey: string;
     subtitleKey: string;
+    stockKey: string;
   };
   pusher: {
     appId: string;

@@ -1,8 +1,8 @@
+import { handleCheckoutSessionCompleted } from '@/webooks/handleCheckoutSessionCompleted';
+import { handleProductUpdated } from '@/webooks/handleProductUpdated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Pusher from 'pusher';
 import appConfig from '@/utils/constants/appConfig';
-import { StripeEvent } from '@/utils/types/StripeEvent';
-import { handleProductUpdated } from './product_updated';
 
 export const pusher = new Pusher({
   appId: appConfig.pusher.appId,
@@ -12,11 +12,12 @@ export const pusher = new Pusher({
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).end();
+  res.end();
 
   webhookHandlers[req.body.type]?.(req.body.data);
 }
 
 const webhookHandlers: { [type: string]: (data: any) => void } = {
-  [StripeEvent.PRODUCT_UPDATED]: handleProductUpdated
+  'product.updated': handleProductUpdated,
+  'checkout.session.completed': handleCheckoutSessionCompleted
 };

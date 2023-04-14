@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { parseRawProduct } from '@/pages/api/stripe/products';
 import { PusherEvent } from '@/utils/types/PusherEvent';
-import { pusher } from '.';
+import { pusher } from '../pages/api/stripe/webhooks';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2022-11-15'
@@ -12,12 +12,12 @@ type ProductUpdatedData = {
   previous_attributes: { [key in keyof Stripe.Product]: string };
 };
 
-export const handleProductUpdated = async (data: ProductUpdatedData) => {
-  const rawProduct = data.object;
-
+export const handleProductUpdated = async ({ object: rawProduct }: ProductUpdatedData) => {
   // get expanded price w/ amount
-  const price = await stripe.prices.retrieve(data.object.default_price as string);
-  rawProduct.default_price = price;
+  if (rawProduct.default_price) {
+    const price = await stripe.prices.retrieve(rawProduct.default_price as string);
+    rawProduct.default_price = price;
+  }
 
   const product = parseRawProduct(rawProduct);
 
