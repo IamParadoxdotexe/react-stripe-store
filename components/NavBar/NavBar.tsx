@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { CartService } from '@/services/CartService';
-import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
-import { Badge, IconButton, InputAdornment, TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
+import { CartButton } from '@/components/CartButton';
+import SearchIcon from '@/icons/Search.svg';
 import styles from './NavBar.module.scss';
 
 export const NavBar: React.FC = () => {
@@ -21,17 +22,13 @@ export const NavBar: React.FC = () => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchOutlined />
+                <SearchIcon />
               </InputAdornment>
             )
           }}
           className={styles.right__search}
         />
-        <IconButton color="secondary" onClick={() => cartCount && CartService.checkout()}>
-          <Badge badgeContent={cartCount} color="primary">
-            <ShoppingCartOutlined />
-          </Badge>
-        </IconButton>
+        <CartButton />
       </div>
     </div>
   );

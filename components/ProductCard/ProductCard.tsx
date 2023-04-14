@@ -4,8 +4,8 @@ import { Product } from '@/pages/api/stripe/products';
 import appConfig from '@/utils/constants/appConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { CartService } from '@/services/CartService';
-import { AddShoppingCartOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
+import ShoppingCartAddIcon from '@/icons/ShoppingCartAdd.svg';
 import styles from './ProductCard.module.scss';
 
 type ProductCardProps = {
@@ -34,7 +34,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
       <div className={styles.product__price}>
         {`$${props.product.price.amount}`}
         <Button
-          startIcon={<AddShoppingCartOutlined />}
+          startIcon={<ShoppingCartAddIcon />}
           size="small"
           onClick={() => CartService.addToCart(props.product, 1)}
         >
