@@ -25,7 +25,6 @@ export const NavBar: React.FC = () => {
               </InputAdornment>
             )
           }}
-          color="secondary"
           className={styles.right__search}
         />
         <IconButton color="secondary" onClick={() => cartCount && CartService.checkout()}>

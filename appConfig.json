@@ -8,7 +8,7 @@
   },
   "product": {
     "titleKey": "name",
-    "subtitleKey": "metadata.descriptor",
+    "subtitleKey": "description",
     "stockKey": "metadata.stock"
   },
   "pusher": {

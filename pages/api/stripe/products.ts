@@ -12,6 +12,7 @@ export type Product = {
     amount: number;
   };
   name: string;
+  description?: string;
   images: string[];
   metadata: {
     [key: string]: string;
@@ -38,7 +39,8 @@ export const parseRawProduct = (rawProduct: Stripe.Product) => {
       amount: rawPrice?.unit_amount ? rawPrice.unit_amount / 100 : 0
     },
     name: rawProduct.name,
+    description: rawProduct.description,
     images: rawProduct.images,
     metadata: rawProduct.metadata
-  };
+  } as Product;
 };

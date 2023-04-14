@@ -14,6 +14,15 @@
     .right__search {
       background-color: color-light(2);
       border-radius: $border-radius;
+      transition: box-shadow 150ms ease;
+
+      &:hover {
+        box-shadow: 0 0 0 2px color-light(3);
+      }
+
+      &:focus-within {
+        box-shadow: 0 0 0 2px color-light(4);
+      }
 
       svg {
         color: color-light(6);
