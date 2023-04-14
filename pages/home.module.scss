@@ -1,13 +1,9 @@
-.products {
-  display: flex;
-  gap: 48px;
-}
-
 .home {
   @include mix-framework;
   display: flex;
   flex-direction: column;
   gap: 48px;
+  padding-bottom: 200px;
 
   button {
     width: fit-content;

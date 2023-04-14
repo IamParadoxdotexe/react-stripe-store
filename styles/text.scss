@@ -1,14 +1,21 @@
 $font-size-sm: 0.875rem;
 $font-size-md: 1rem;
 $font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
 
-@mixin text-primary {
-  font-size: $font-size-lg;
-  font-weight: 700;
+@mixin text-h3 {
+  font-size: $font-size-xl;
+  font-weight: 600;
   color: color-dark(1);
 }
 
-@mixin text-secondary {
+@mixin text-h4 {
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: color-dark(1);
+}
+
+@mixin text-h5 {
   font-size: $font-size-md;
   font-weight: 500;
   color: color-dark(8);
