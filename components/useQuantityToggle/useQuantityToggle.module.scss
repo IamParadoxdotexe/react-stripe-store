@@ -1,0 +1,24 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  border: 1px solid color-light(4);
+  width: fit-content;
+  border-radius: $border-radius;
+  user-select: none;
+
+  .toggle__quantity div {
+    pointer-events: none;
+    width: 40px;
+    height: 32px;
+
+    input {
+      text-align: center;
+      height: 100%;
+      padding: 0;
+    }
+
+    fieldset {
+      border: none;
+    }
+  }
+}
