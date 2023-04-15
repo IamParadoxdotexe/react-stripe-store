@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently --kill-others \"next dev\" \"npm run listen\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "npx prettier --write .",
     "clean": "npm run lint & npm run format",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "listen": "stripe listen --forward-to localhost:3000/webhook"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@svgr/webpack": "^7.0.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "concurrently": "^8.0.1",
     "eslint-config-prettier": "^8.8.0",
     "husky": "^8.0.3",
     "prettier": "2.8.7",
