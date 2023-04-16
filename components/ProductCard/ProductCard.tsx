@@ -34,11 +34,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
   });
 
   const AddToCartButton = () => (
-    <Button
-      startIcon={<ShoppingCartAddIcon />}
-      size="small"
-      onClick={() => CartService.updateCart(props.product, 1)}
-    >
+    <Button startIcon={<ShoppingCartAddIcon />} size="small" onClick={() => setQuantity(1)}>
       Add to cart
     </Button>
   );
@@ -51,14 +47,16 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
 
   // update quantity from cartItem change
   useEffect(() => {
-    if (cartItem && quantity != cartItem.quantity) {
-      setQuantity(cartItem?.quantity ?? 0);
+    const cartItemQuantity = cartItem?.quantity ?? 0;
+    if (quantity != cartItemQuantity) {
+      setQuantity(cartItemQuantity);
     }
   }, [cartItem]);
 
   // update cartItem from quantity change
   useEffect(() => {
-    if (cartItem && cartItem.quantity != quantity) {
+    const cartItemQuantity = cartItem?.quantity ?? 0;
+    if (cartItemQuantity != quantity) {
       CartService.updateCart(props.product, quantity);
     }
   }, [quantity]);
