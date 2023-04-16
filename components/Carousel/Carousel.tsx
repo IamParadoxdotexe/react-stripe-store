@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
+import React, { ReactNode, useLayoutEffect, useState } from 'react';
 import { IconButton } from '@mui/material';
 import LeftArrowIcon from '@/icons/ArrowLeft.svg';
 import RightArrowIcon from '@/icons/ArrowRight.svg';
@@ -6,7 +6,7 @@ import styles from './Carousel.module.scss';
 
 type CarouselProps = {
   title: string;
-  children: ReactNode[];
+  children?: ReactNode | ReactNode[];
 };
 
 export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {

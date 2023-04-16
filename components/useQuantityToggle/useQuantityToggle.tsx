@@ -5,12 +5,13 @@ import PlusIcon from '@/icons/Plus.svg';
 import styles from './useQuantityToggle.module.scss';
 
 type QuantityToggleProps = {
+  initialValue?: number;
   max?: number;
   min?: number;
 };
 
 export const useQuantityToggle = (props?: QuantityToggleProps) => {
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(props?.initialValue ?? 0);
 
   const max = props?.max ?? 10;
   const min = props?.min ?? 0;

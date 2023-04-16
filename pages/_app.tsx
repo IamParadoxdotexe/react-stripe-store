@@ -1,13 +1,14 @@
 import { ThemeProvider } from '@emotion/react';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { getStyleExports } from '@/utils/functions/getStyleExports';
-import { DrawerContents, DrawerService } from '@/services/DrawerService';
+import { ProductService } from '@/services/ProductService';
 import { PusherService } from '@/services/PusherService';
-import { Drawer, createTheme } from '@mui/material';
+import { createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { NavBar } from '@/components/NavBar/NavBar';
+import { useDrawer } from '@/components/drawers/useDrawer';
 import styles from './app.module.scss';
 
 const styleExports = getStyleExports();
@@ -39,13 +40,11 @@ const theme = createTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [drawerContents, setDrawerContents] = useState<DrawerContents>();
+  const { Drawer } = useDrawer();
 
   useEffect(() => {
-    DrawerService.isOpen.subscribe(setDrawerOpen);
-    DrawerService.drawerContents.subscribe(setDrawerContents);
     PusherService.bind();
+    ProductService.load();
 
     return () => PusherService.unbind();
   }, []);
@@ -56,9 +55,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <main id={styles.app} className={`${inter.className}`}>
         <NavBar />
         <Component {...pageProps} />
-        <Drawer anchor="right" open={isDrawerOpen} onClose={DrawerService.close}>
-          {drawerContents}
-        </Drawer>
+        {Drawer}
       </main>
     </ThemeProvider>
   );

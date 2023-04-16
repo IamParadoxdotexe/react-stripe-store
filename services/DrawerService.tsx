@@ -1,14 +1,15 @@
-import { ReactNode } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
-export type DrawerContents = ReactNode | ReactNode[];
+export enum DrawerType {
+  CART = 'CART'
+}
 
 export const DrawerService = new (class {
   public isOpen = new BehaviorSubject(false);
-  public drawerContents = new BehaviorSubject<DrawerContents>(null);
+  public drawerType = new BehaviorSubject<DrawerType | undefined>(undefined);
 
-  public open = (drawerContents: DrawerContents) => {
-    this.drawerContents.next(drawerContents);
+  public open = (drawerType: DrawerType) => {
+    this.drawerType.next(drawerType);
     this.isOpen.next(true);
   };
 

@@ -1,35 +1,40 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Product } from '@/pages/api/stripe/products';
 import appConfig from '@/utils/constants/appConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
-import { CartItem, CartService } from '@/services/CartService';
+import { useServiceState } from '@/utils/hooks/useServiceState';
+import { CartService } from '@/services/CartService';
 import { Button } from '@mui/material';
 import ShoppingCartAddIcon from '@/icons/ShoppingCartAdd.svg';
 import { useQuantityToggle } from '../useQuantityToggle';
 import styles from './ProductCard.module.scss';
 
-type ProductCardVariant = 'vertical' | 'horizontal';
-
 type ProductCardProps = {
   product: Product;
-  variant?: ProductCardVariant;
+  variant?: 'vertical' | 'horizontal';
 };
 
-const IMAGE_SIZE: { [key in ProductCardVariant]: number } = {
+const IMAGE_SIZE: { [key in 'vertical' | 'horizontal']: number } = {
   vertical: 240,
   horizontal: 90
 };
 
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
-  const [cartItem, setCartItem] = useState<CartItem>();
+  const cartItems = useServiceState(CartService.cartItems);
 
-  const variant: ProductCardVariant = props.variant ?? 'vertical';
+  const cartItem = useMemo(
+    () => cartItems.find(cartItem => cartItem.id === props.product.id),
+    [cartItems]
+  );
+
+  const variant = props.variant ?? 'vertical';
 
   const title = getNestedKey(props.product, appConfig.product.titleKey);
   const subtitle = getNestedKey(props.product, appConfig.product.subtitleKey);
 
   const { QuantityToggle, quantity, setQuantity } = useQuantityToggle({
+    initialValue: cartItem?.quantity,
     max: getNestedKey(props.product, appConfig.product.stockKey)
   });
 
@@ -38,12 +43,6 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
       Add to cart
     </Button>
   );
-
-  useEffect(() => {
-    CartService.cartItems.subscribe(cartItems =>
-      setCartItem(cartItems.find(cartItem => cartItem.id === props.product.id))
-    );
-  }, []);
 
   // update quantity from cartItem change
   useEffect(() => {

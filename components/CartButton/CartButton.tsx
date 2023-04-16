@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useServiceState } from '@/utils/hooks/useServiceState';
 import { CartService } from '@/services/CartService';
-import { DrawerService } from '@/services/DrawerService';
+import { DrawerService, DrawerType } from '@/services/DrawerService';
 import { Badge, IconButton } from '@mui/material';
 import ShoppingCartIcon from '@/icons/ShoppingCart.svg';
 
 export const CartButton: React.FC = () => {
-  const [cartCount, setCartCount] = useState(0);
+  const cartCount = useServiceState(CartService.cartCount);
 
   const onOpen = () => {
-    DrawerService.open(<div>Hello world!</div>);
+    DrawerService.open(DrawerType.CART);
   };
-
-  useEffect(() => {
-    CartService.cartCount.subscribe(setCartCount);
-  });
 
   return (
     <IconButton color="secondary" onClick={onOpen}>

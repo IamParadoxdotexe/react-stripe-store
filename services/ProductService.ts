@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
+import { dictOf } from '@/utils/functions/dictOf';
 
 export type Products = {
   [id: string]: Product;
@@ -8,10 +9,12 @@ export type Products = {
 export const ProductService = new (class {
   public products = new BehaviorSubject<Products>({});
 
-  constructor() {
+  public load() {
     fetch('http://localhost:3000/api/stripe/products')
       .then(res => res.json())
-      .then(products => this.products.next(products));
+      .then((products: Product[]) => {
+        this.products.next(dictOf(products, 'id'));
+      });
   }
 
   public onProductUpdated(product: Product) {

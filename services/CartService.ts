@@ -30,7 +30,7 @@ export const CartService = new (class {
       this.cartItems.value.push(newCartItem);
     }
 
-    this.cartItems.next(this.cartItems.value);
+    this.cartItems.next([...this.cartItems.value]);
 
     // update cart count
     this.cartCount.next(
