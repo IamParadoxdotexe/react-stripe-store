@@ -1,21 +1,19 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Product } from '@/pages/api/stripe/products';
 import appConfig from '@/utils/constants/appConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
-import { CartService } from '@/services/CartService';
+import { CartItem, CartService } from '@/services/CartService';
 import { Button } from '@mui/material';
 import ShoppingCartAddIcon from '@/icons/ShoppingCartAdd.svg';
 import { useQuantityToggle } from '../useQuantityToggle';
 import styles from './ProductCard.module.scss';
 
 type ProductCardVariant = 'vertical' | 'horizontal';
-type ProductCardAction = 'add-to-cart' | 'quantity-toggle';
 
 type ProductCardProps = {
   product: Product;
   variant?: ProductCardVariant;
-  action?: ProductCardAction;
 };
 
 const IMAGE_SIZE: { [key in ProductCardVariant]: number } = {
@@ -24,13 +22,46 @@ const IMAGE_SIZE: { [key in ProductCardVariant]: number } = {
 };
 
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
+  const [cartItem, setCartItem] = useState<CartItem>();
+
   const variant: ProductCardVariant = props.variant ?? 'vertical';
-  const action: ProductCardAction = props.action ?? 'add-to-cart';
 
   const title = getNestedKey(props.product, appConfig.product.titleKey);
   const subtitle = getNestedKey(props.product, appConfig.product.subtitleKey);
 
-  const { QuantityToggle, quantity, setQuanity } = useQuantityToggle();
+  const { QuantityToggle, quantity, setQuantity } = useQuantityToggle({
+    max: getNestedKey(props.product, appConfig.product.stockKey)
+  });
+
+  const AddToCartButton = () => (
+    <Button
+      startIcon={<ShoppingCartAddIcon />}
+      size="small"
+      onClick={() => CartService.updateCart(props.product, 1)}
+    >
+      Add to cart
+    </Button>
+  );
+
+  useEffect(() => {
+    CartService.cartItems.subscribe(cartItems =>
+      setCartItem(cartItems.find(cartItem => cartItem.id === props.product.id))
+    );
+  }, []);
+
+  // update quantity from cartItem change
+  useEffect(() => {
+    if (cartItem && quantity != cartItem.quantity) {
+      setQuantity(cartItem?.quantity ?? 0);
+    }
+  }, [cartItem]);
+
+  // update cartItem from quantity change
+  useEffect(() => {
+    if (cartItem && cartItem.quantity != quantity) {
+      CartService.updateCart(props.product, quantity);
+    }
+  }, [quantity]);
 
   return (
     <div className={`${styles.product} ${styles[variant]}`}>
@@ -50,16 +81,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
 
         <div className={styles.product__price}>
           {`$${props.product.price.amount}`}
-          {action === 'add-to-cart' && (
-            <Button
-              startIcon={<ShoppingCartAddIcon />}
-              size="small"
-              onClick={() => CartService.addToCart(props.product, 1)}
-            >
-              Add to cart
-            </Button>
-          )}
-          {action === 'quantity-toggle' && <QuantityToggle />}
+          {quantity === 0 ? <AddToCartButton /> : <QuantityToggle />}
         </div>
       </div>
     </div>

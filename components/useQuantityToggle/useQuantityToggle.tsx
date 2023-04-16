@@ -10,7 +10,7 @@ type QuantityToggleProps = {
 };
 
 export const useQuantityToggle = (props?: QuantityToggleProps) => {
-  const [quantity, setQuanity] = useState(0);
+  const [quantity, setQuantity] = useState(0);
 
   const max = props?.max ?? 10;
   const min = props?.min ?? 0;
@@ -20,7 +20,7 @@ export const useQuantityToggle = (props?: QuantityToggleProps) => {
       <IconButton
         size="small"
         color="primary"
-        onClick={() => setQuanity(quantity - 1)}
+        onClick={() => setQuantity(quantity - 1)}
         disabled={quantity <= min}
       >
         <MinusIcon fontSize="inherit" />
@@ -29,7 +29,7 @@ export const useQuantityToggle = (props?: QuantityToggleProps) => {
       <IconButton
         size="small"
         color="primary"
-        onClick={() => setQuanity(quantity + 1)}
+        onClick={() => setQuantity(quantity + 1)}
         disabled={quantity >= max}
       >
         <PlusIcon fontSize="inherit" />
@@ -37,5 +37,5 @@ export const useQuantityToggle = (props?: QuantityToggleProps) => {
     </div>
   );
 
-  return { QuantityToggle, quantity, setQuanity };
+  return { QuantityToggle, quantity, setQuantity };
 };

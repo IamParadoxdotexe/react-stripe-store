@@ -1,23 +1,41 @@
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
 
-export type Cart = {
-  [priceId: string]: number;
-};
+export type CartItem = Product & { quantity: number };
 
 export const CartService = new (class {
-  private cart: Cart = {};
+  public cartItems = new BehaviorSubject<CartItem[]>([]);
   public cartCount = new BehaviorSubject(0);
 
-  public addToCart(product: Product, quantity: number) {
-    // update cart quantity
-    if (!this.cart[product.price.id]) {
-      this.cart[product.price.id] = 0;
+  public updateCart(product: Product, quantity: number) {
+    const newCartItem = {
+      ...product,
+      quantity
+    };
+
+    const cartItemIndex = this.cartItems.value.findIndex(
+      cartItem => cartItem.id === newCartItem.id
+    );
+
+    if (cartItemIndex > -1) {
+      if (quantity > 0) {
+        // update existing item
+        this.cartItems.value.splice(cartItemIndex, 1, newCartItem);
+      } else {
+        // remove existing item
+        this.cartItems.value.splice(cartItemIndex, 1);
+      }
+    } else if (quantity > 0) {
+      // add new item
+      this.cartItems.value.push(newCartItem);
     }
-    this.cart[product.price.id] += quantity;
+
+    this.cartItems.next(this.cartItems.value);
 
     // update cart count
-    this.cartCount.next(Object.values(this.cart).reduce((sum, n) => sum + n, 0));
+    this.cartCount.next(
+      this.cartItems.value.reduce((sum, cartItem: CartItem) => sum + cartItem.quantity, 0)
+    );
   }
 
   public checkout() {
@@ -26,7 +44,7 @@ export const CartService = new (class {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.cart)
+      body: JSON.stringify(this.cartItems.value)
     })
       .then(res => res.json())
       .then(({ url }) => {
