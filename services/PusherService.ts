@@ -11,7 +11,6 @@ const mainChannel = pusher.subscribe('main');
 
 const pusherHandlers: { [key in PusherEvent]: (data: any) => void } = {
   [PusherEvent.PRODUCT_UPDATED]: product => ProductService.onProductUpdated(product),
-  [PusherEvent.PRODUCT_CREATED]: product => ProductService.onProductCreated(product),
   [PusherEvent.PRODUCT_DELETED]: productId => ProductService.onProductDeleted(productId)
 };
 

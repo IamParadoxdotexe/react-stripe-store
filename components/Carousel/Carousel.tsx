@@ -37,8 +37,18 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     if (carouselRef) {
       const carouselWidth = carouselRef?.clientWidth;
       const carouselItemsWidth = (carouselRef?.childNodes[1] as HTMLElement).scrollWidth;
+      const newMaxOffset = Math.max(carouselItemsWidth - carouselWidth, 0);
+
       setCarouselWidth(carouselWidth);
-      setMaxOffset(Math.max(carouselItemsWidth - carouselWidth, 0));
+      setMaxOffset(maxOffset => {
+        const maxOffsetChange = maxOffset - newMaxOffset;
+
+        if (maxOffsetChange > 0) {
+          setOffset(0); // reset offset to 0 to avoid any oddities when maxOffset is increased
+        }
+
+        return newMaxOffset;
+      });
     }
   };
 

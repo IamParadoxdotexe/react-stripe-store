@@ -25,7 +25,7 @@ export const useQuantityToggle = (props?: QuantityToggleProps) => {
       >
         <MinusIcon fontSize="inherit" />
       </IconButton>
-      <TextField className={styles.toggle__quantity} value={quantity} />
+      <TextField className={styles.toggle__quantity} value={quantity} disabled />
       <IconButton
         size="small"
         color="primary"

@@ -19,8 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const webhookHandlers: { [type: string]: (data: any) => void } = {
-  'product.updated': data => handleProductUpdated({ ...data, created: false }),
-  'product.created': data => handleProductUpdated({ ...data, created: true }),
+  'product.updated': handleProductUpdated,
+  'product.created': handleProductUpdated,
   'product.deleted': handleProductDeleted,
   'checkout.session.completed': handleCheckoutSessionCompleted
 };
