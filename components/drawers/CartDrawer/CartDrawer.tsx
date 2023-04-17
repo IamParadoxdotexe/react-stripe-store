@@ -7,9 +7,7 @@ import { ProductCard } from '@/components/ProductCard';
 import styles from './CartDrawer.module.scss';
 
 export const CartDrawer: React.FC = () => {
-  const cartItems = useServiceState(CartService.cartItems);
-  const cartCount = useServiceState(CartService.cartCount);
-  const cartTotal = useServiceState(CartService.cartTotal);
+  const cart = useServiceState(CartService.cart);
 
   return (
     <div className={styles.drawer}>
@@ -21,15 +19,15 @@ export const CartDrawer: React.FC = () => {
       </div>
 
       <div className={styles.drawer__items}>
-        {cartItems.map(cartItem => (
+        {cart.items.map(cartItem => (
           <ProductCard key={cartItem.id} product={cartItem} variant="horizontal" />
         ))}
       </div>
 
       <div className={styles.drawer__checkout}>
         <div className={styles.checkout__total}>
-          <div>{cartCount} items</div>
-          <div>{formatMoney(cartTotal)}</div>
+          <div>{cart.count} items</div>
+          <div>{formatMoney(cart.total)}</div>
         </div>
         <Button variant="contained" onClick={() => CartService.checkout()}>
           Checkout

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "npx prettier --write .",
-    "clean": "npm run lint & npm run format",
+    "clean": "npm run lint && npm run format",
     "prepare": "husky install",
     "listen": "stripe listen --forward-to localhost:3000/webhook"
   },

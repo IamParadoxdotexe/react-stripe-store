@@ -16,17 +16,12 @@ type ProductCardProps = {
   variant?: 'vertical' | 'horizontal';
 };
 
-const IMAGE_SIZE: { [key in 'vertical' | 'horizontal']: number } = {
-  vertical: 240,
-  horizontal: 90
-};
-
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
-  const cartItems = useServiceState(CartService.cartItems);
+  const cart = useServiceState(CartService.cart);
 
   const cartItem = useMemo(
-    () => cartItems.find(cartItem => cartItem.id === props.product.id),
-    [cartItems]
+    () => cart.items.find(cartItem => cartItem.id === props.product.id),
+    [cart]
   );
 
   const variant = props.variant ?? 'vertical';

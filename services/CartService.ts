@@ -3,47 +3,56 @@ import { Product } from '@/pages/api/stripe/products';
 
 export type CartItem = Product & { quantity: number };
 
+export type Cart = {
+  items: CartItem[];
+  count: number;
+  total: number;
+};
+
 export const CartService = new (class {
-  public cartItems = new BehaviorSubject<CartItem[]>([]);
-  public cartCount = new BehaviorSubject(0);
-  public cartTotal = new BehaviorSubject(0);
+  public cart = new BehaviorSubject<Cart>({
+    items: [],
+    count: 0,
+    total: 0
+  });
 
   public updateCart(product: Product, quantity: number) {
+    const cartItems = this.cart.value.items;
+
     const newCartItem = {
       ...product,
       quantity
     };
 
-    const cartItemIndex = this.cartItems.value.findIndex(
-      cartItem => cartItem.id === newCartItem.id
-    );
+    const cartItemIndex = cartItems.findIndex(cartItem => cartItem.id === newCartItem.id);
 
     if (cartItemIndex > -1) {
       if (quantity > 0) {
         // update existing item
-        this.cartItems.value.splice(cartItemIndex, 1, newCartItem);
+        cartItems.splice(cartItemIndex, 1, newCartItem);
       } else {
         // remove existing item
-        this.cartItems.value.splice(cartItemIndex, 1);
+        cartItems.splice(cartItemIndex, 1);
       }
     } else if (quantity > 0) {
       // add new item
-      this.cartItems.value.push(newCartItem);
+      cartItems.push(newCartItem);
     }
-
-    this.cartItems.next([...this.cartItems.value]);
 
     // update cart count and total
     let cartCount = 0;
     let cartTotal = 0;
 
-    for (const cartItem of this.cartItems.value) {
+    for (const cartItem of cartItems) {
       cartCount += cartItem.quantity;
       cartTotal += cartItem.price.amount * cartItem.quantity;
     }
 
-    this.cartCount.next(cartCount);
-    this.cartTotal.next(cartTotal);
+    this.cart.next({
+      items: cartItems,
+      count: cartCount,
+      total: cartTotal
+    });
   }
 
   public checkout() {
@@ -52,7 +61,7 @@ export const CartService = new (class {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.cartItems.value)
+      body: JSON.stringify(this.cart.value.items)
     })
       .then(res => res.json())
       .then(({ url }) => {

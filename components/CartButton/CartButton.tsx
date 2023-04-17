@@ -6,7 +6,7 @@ import { Badge, IconButton } from '@mui/material';
 import ShoppingCartIcon from '@/icons/ShoppingCart.svg';
 
 export const CartButton: React.FC = () => {
-  const cartCount = useServiceState(CartService.cartCount);
+  const cart = useServiceState(CartService.cart);
 
   const onOpen = () => {
     DrawerService.open(DrawerType.CART);
@@ -14,7 +14,7 @@ export const CartButton: React.FC = () => {
 
   return (
     <IconButton color="secondary" onClick={onOpen}>
-      <Badge badgeContent={cartCount} color="primary">
+      <Badge badgeContent={cart.count} color="primary">
         <ShoppingCartIcon />
       </Badge>
     </IconButton>
