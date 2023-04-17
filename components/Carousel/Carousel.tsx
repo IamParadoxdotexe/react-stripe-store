@@ -63,8 +63,9 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     return () => window.removeEventListener('resize', onResize);
   }, [carouselRef, props.children]);
 
-  const sliderWidth = (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
-  const sliderOffset = (offset / carouselItemsWidth) * INDICATOR_WIDTH;
+  const sliderWidth =
+    carouselWidth && carouselItemsWidth && (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
+  const sliderOffset = carouselWidth && offset && (offset / carouselItemsWidth) * INDICATOR_WIDTH;
 
   return (
     <div ref={setCarouselRef} className={styles.carousel}>

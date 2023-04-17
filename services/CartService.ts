@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
+import { handleResponse } from '@/utils/functions/handleResponse';
 
 export type CartItem = Product & { quantity: number };
 
@@ -55,17 +56,20 @@ export const CartService = new (class {
     });
   }
 
-  public checkout() {
-    fetch('http://localhost:3000/api/stripe/checkout', {
+  public async checkout() {
+    return fetch('http://localhost:3000/api/stripe/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(this.cart.value.items)
     })
-      .then(res => res.json())
-      .then(({ url }) => {
-        window.location = url;
+      .then(handleResponse)
+      .then(fetchResponse => {
+        if (fetchResponse.isOk() && fetchResponse.body?.url) {
+          window.location = fetchResponse.body?.url;
+        }
+        return fetchResponse;
       });
   }
 })();

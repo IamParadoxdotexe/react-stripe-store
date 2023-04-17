@@ -13,6 +13,10 @@ interface CheckoutRequest extends NextApiRequest {
 }
 
 export default async function handler(req: CheckoutRequest, res: NextApiResponse) {
+  if (req.body.length === 0) {
+    return res.status(400).json({ detail: 'At least one cart item required.' });
+  }
+
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = req.body.map(cartItem => ({
     price: cartItem.price.id,
     quantity: cartItem.quantity,

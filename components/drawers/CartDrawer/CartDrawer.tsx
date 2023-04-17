@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatMoney } from '@/utils/functions/formatMoney';
 import { useServiceState } from '@/utils/hooks/useServiceState';
+import { FetchResponse } from '@/utils/types/FetchResponse';
 import { CartService } from '@/services/CartService';
-import { Button } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Alert } from '@mui/material';
 import { ProductCard } from '@/components/ProductCard';
 import styles from './CartDrawer.module.scss';
 
 export const CartDrawer: React.FC = () => {
   const cart = useServiceState(CartService.cart);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutResult, setCheckoutResult] = useState<FetchResponse>();
+
+  const onCheckout = () => {
+    setCheckingOut(true);
+    CartService.checkout().then(fetchResponse => {
+      setCheckingOut(false);
+      setCheckoutResult(fetchResponse);
+    });
+  };
 
   return (
     <div className={styles.drawer}>
@@ -29,9 +41,14 @@ export const CartDrawer: React.FC = () => {
           <div>{cart.count} items</div>
           <div>{formatMoney(cart.total)}</div>
         </div>
-        <Button variant="contained" onClick={() => CartService.checkout()}>
+
+        <LoadingButton variant="contained" onClick={onCheckout} loading={checkingOut}>
           Checkout
-        </Button>
+        </LoadingButton>
+
+        {checkoutResult && !checkoutResult.isOk() && (
+          <Alert severity="error">{checkoutResult.detail}</Alert>
+        )}
       </div>
     </div>
   );
