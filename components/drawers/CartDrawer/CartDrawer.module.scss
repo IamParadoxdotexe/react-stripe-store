@@ -1,0 +1,39 @@
+.drawer {
+  padding: 36px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+
+  .drawer__header {
+    .header__title {
+      @include text-h3;
+    }
+
+    .header__subtitle {
+      @include text-h6;
+      max-width: 320px;
+    }
+  }
+
+  .drawer__items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .drawer__checkout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .checkout__total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      > :last-child {
+        @include text-h3;
+      }
+    }
+  }
+}

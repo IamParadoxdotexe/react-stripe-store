@@ -1,3 +1,4 @@
+import '@/styles/global.scss';
 import { ThemeProvider } from '@emotion/react';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
@@ -9,7 +10,6 @@ import { createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { NavBar } from '@/components/NavBar/NavBar';
 import { useDrawer } from '@/components/drawers/useDrawer';
-import styles from './app.module.scss';
 
 const styleExports = getStyleExports();
 
@@ -52,7 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <main id={styles.app} className={`${inter.className}`}>
+      <main className={`${inter.className}`}>
         <NavBar />
         <Component {...pageProps} />
         {Drawer}

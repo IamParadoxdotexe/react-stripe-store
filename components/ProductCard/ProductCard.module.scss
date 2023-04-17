@@ -1,5 +1,5 @@
 $vertical-image-size: 240px;
-$horizontal-image-size: 90px;
+$horizontal-image-size: 94px;
 
 .product {
   display: flex;
@@ -35,7 +35,6 @@ $horizontal-image-size: 90px;
     .product__info {
       display: flex;
       flex-direction: column;
-      gap: 3px;
 
       .info__title {
         @include text-h4;
@@ -53,6 +52,7 @@ $horizontal-image-size: 90px;
       font-size: $font-size-lg;
       font-weight: 500;
       line-height: 1;
+      height: 31px;
     }
   }
 }

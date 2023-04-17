@@ -20,3 +20,8 @@ $font-size-xl: 1.25rem;
   font-weight: 500;
   color: color-dark(8);
 }
+
+@mixin text-h6 {
+  font-size: $font-size-sm;
+  color: color-dark(8);
+}

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import React, { useEffect, useMemo } from 'react';
 import { Product } from '@/pages/api/stripe/products';
 import appConfig from '@/utils/constants/appConfig';
+import { formatMoney } from '@/utils/functions/formatMoney';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { CartService } from '@/services/CartService';
@@ -77,8 +78,8 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
         </div>
 
         <div className={styles.product__price}>
-          {`$${props.product.price.amount}`}
-          {quantity === 0 ? <AddToCartButton /> : <QuantityToggle />}
+          {formatMoney(props.product.price.amount)}
+          {cartItem?.quantity ? <QuantityToggle /> : <AddToCartButton />}
         </div>
       </div>
     </div>

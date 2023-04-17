@@ -6,6 +6,7 @@ export type CartItem = Product & { quantity: number };
 export const CartService = new (class {
   public cartItems = new BehaviorSubject<CartItem[]>([]);
   public cartCount = new BehaviorSubject(0);
+  public cartTotal = new BehaviorSubject(0);
 
   public updateCart(product: Product, quantity: number) {
     const newCartItem = {
@@ -32,10 +33,17 @@ export const CartService = new (class {
 
     this.cartItems.next([...this.cartItems.value]);
 
-    // update cart count
-    this.cartCount.next(
-      this.cartItems.value.reduce((sum, cartItem: CartItem) => sum + cartItem.quantity, 0)
-    );
+    // update cart count and total
+    let cartCount = 0;
+    let cartTotal = 0;
+
+    for (const cartItem of this.cartItems.value) {
+      cartCount += cartItem.quantity;
+      cartTotal += cartItem.price.amount * cartItem.quantity;
+    }
+
+    this.cartCount.next(cartCount);
+    this.cartTotal.next(cartTotal);
   }
 
   public checkout() {
