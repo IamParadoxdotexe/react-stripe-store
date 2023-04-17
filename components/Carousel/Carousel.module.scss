@@ -23,4 +23,18 @@
     transition: margin-left 450ms ease;
     width: fit-content;
   }
+
+  .carousel__indicator {
+    height: 6px;
+    border-radius: 3px;
+    background-color: color-light(4);
+    margin: 0 auto;
+
+    .indicator__slider {
+      height: 100%;
+      background-color: color-dark(4);
+      transition: margin-left 450ms ease;
+      border-radius: 3px;
+    }
+  }
 }

@@ -1,3 +1,6 @@
+$vertical-image-size: 240px;
+$horizontal-image-size: 90px;
+
 .product {
   display: flex;
   flex-direction: column;
@@ -6,6 +9,11 @@
 
   &.horizontal {
     flex-direction: row;
+
+    .product__image {
+      width: $horizontal-image-size;
+      height: $horizontal-image-size;
+    }
   }
 
   .product__image {
@@ -14,12 +22,15 @@
     object-fit: contain;
     padding: 16px;
     user-select: none;
+    width: $vertical-image-size;
+    height: $vertical-image-size;
   }
 
   .product__content {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    width: $vertical-image-size;
 
     .product__info {
       display: flex;

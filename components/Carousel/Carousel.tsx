@@ -9,9 +9,12 @@ type CarouselProps = {
   children?: ReactNode | ReactNode[];
 };
 
+const INDICATOR_WIDTH = 150;
+
 export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [offset, setOffset] = useState(0);
   const [carouselRef, setCarouselRef] = useState<HTMLDivElement | null>();
+  const [carouselItemsWidth, setCarouselItemsWidth] = useState(0);
   const [carouselWidth, setCarouselWidth] = useState(0);
   const [maxOffset, setMaxOffset] = useState(0);
 
@@ -39,6 +42,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       const carouselItemsWidth = (carouselRef?.childNodes[1] as HTMLElement).scrollWidth;
       const newMaxOffset = Math.max(carouselItemsWidth - carouselWidth, 0);
 
+      setCarouselItemsWidth(carouselItemsWidth);
       setCarouselWidth(carouselWidth);
       setMaxOffset(maxOffset => {
         const maxOffsetChange = maxOffset - newMaxOffset;
@@ -59,6 +63,9 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     return () => window.removeEventListener('resize', onResize);
   }, [carouselRef, props.children]);
 
+  const sliderWidth = (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
+  const sliderOffset = (offset / carouselItemsWidth) * INDICATOR_WIDTH;
+
   return (
     <div ref={setCarouselRef} className={styles.carousel}>
       <div className={styles.carousel__header}>
@@ -72,6 +79,12 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       </div>
       <div className={styles.carousel__items} style={{ marginLeft: -offset }}>
         {props.children}
+      </div>
+      <div className={styles.carousel__indicator} style={{ width: INDICATOR_WIDTH }}>
+        <div
+          className={styles.indicator__slider}
+          style={{ width: sliderWidth, marginLeft: sliderOffset }}
+        />
       </div>
     </div>
   );

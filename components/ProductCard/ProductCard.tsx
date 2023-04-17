@@ -66,11 +66,11 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
         className={styles.product__image}
         src={props.product.images[0]}
         alt={title}
-        width={IMAGE_SIZE[variant]}
-        height={IMAGE_SIZE[variant]}
+        width={240}
+        height={240}
       />
 
-      <div className={styles.product__content} style={{ width: IMAGE_SIZE.vertical }}>
+      <div className={styles.product__content}>
         <div className={styles.product__info}>
           <div className={styles.info__title}>{title}</div>
           <div className={styles.info__subtitle}>{subtitle}</div>
