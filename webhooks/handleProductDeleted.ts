@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
+import { pusher } from '@/pages/api/stripe/webhooks';
 import { PusherEvent } from '@/utils/types/PusherEvent';
-import { pusher } from '../pages/api/stripe/webhooks';
 
 type ProductDeletedData = {
   object: Stripe.Product;

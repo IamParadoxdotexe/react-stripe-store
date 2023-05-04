@@ -10,7 +10,7 @@
     "format": "npx prettier --write .",
     "clean": "npm run lint && npm run format",
     "prepare": "husky install",
-    "listen": "stripe listen --forward-to localhost:3000/webhook"
+    "listen": "stripe listen --forward-to localhost:3000/api/stripe/webhooks"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",

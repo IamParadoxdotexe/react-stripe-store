@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { parseRawProduct } from '@/pages/api/stripe/products';
+import { pusher } from '@/pages/api/stripe/webhooks';
 import { PusherEvent } from '@/utils/types/PusherEvent';
-import { pusher } from '../pages/api/stripe/webhooks';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2022-11-15'

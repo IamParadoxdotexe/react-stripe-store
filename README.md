@@ -60,7 +60,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Using [Vercel](https://vercel.com/), you can deploy your website immediately with the steps below.
 
-1. Add a new `Vercel` project pointing at your forked repository
+### Stripe
+
+1. Add a new webhook for your hosted domain URL with the slug `/api/stripe/webhooks`
+2. Listen to the following events:
+   - `checkout.session.completed`
+   - `product.created`
+   - `product.deleted`
+   - `product.updated`
+
+### Vercel
+
+1. Add a new project pointing at your forked repository
 2. Add your environmental variables for `Stripe` and `Pusher`
 3. Add the environmental variable `NEXT_PUBLIC_ENV=PROD`
 4. Deploy and view your website!
