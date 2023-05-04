@@ -1,7 +1,8 @@
 {
+  "url": "https://react-stripe-store.vercel.app",
   "checkout": {
-    "successUrl": "http://localhost:3000",
-    "errorUrl": "http://localhost:3000",
+    "successUrl": "/",
+    "errorUrl": "/",
     "shipping": {
       "countries": ["US"]
     }

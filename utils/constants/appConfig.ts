@@ -2,6 +2,7 @@ import appConfig from '@/appConfig.json';
 import Stripe from 'stripe';
 
 type AppConfig = {
+  url: string;
   checkout: {
     successUrl: string;
     errorUrl: string;

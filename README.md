@@ -32,6 +32,7 @@ The `NEXT_PUBLIC_PUSHER_APP_KEY` and `NEXT_PUBLIC_PUSHER_APP_SECRET` will be use
 
 To configure your website, you can modify the `appConfig.json` file. The options available are detailed below.
 
+- `url` - hosted domain URL
 - `checkout`
   - `successUrl` - redirect URL after successful Stripe transaction
   - `errorUrl` - redirect URL after erroneous Stripe transaction

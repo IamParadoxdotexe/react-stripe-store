@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
+import { getUrl } from '@/utils/functions/getUrl';
 import { handleResponse } from '@/utils/functions/handleResponse';
 
 export type CartItem = Product & { quantity: number };
@@ -57,7 +58,7 @@ export const CartService = new (class {
   }
 
   public async checkout() {
-    return fetch('http://localhost:3000/api/stripe/checkout', {
+    return fetch(getUrl('/api/stripe/checkout'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

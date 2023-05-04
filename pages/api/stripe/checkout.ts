@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import appConfig from '@/utils/constants/appConfig';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
+import { getUrl } from '@/utils/functions/getUrl';
 import { CartItem } from '@/services/CartService';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -29,8 +30,8 @@ export default async function handler(req: CheckoutRequest, res: NextApiResponse
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     line_items: lineItems,
     mode: 'payment',
-    success_url: appConfig.checkout.successUrl,
-    cancel_url: appConfig.checkout.errorUrl
+    success_url: getUrl(appConfig.checkout.successUrl),
+    cancel_url: getUrl(appConfig.checkout.errorUrl)
   };
 
   if (appConfig.checkout.shipping) {
