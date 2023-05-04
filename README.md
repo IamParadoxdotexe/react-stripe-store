@@ -55,3 +55,12 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Deployment
+
+Using [Vercel](https://vercel.com/), you can deploy your website immediately with the steps below.
+
+1. Add a new `Vercel` project pointing at your forked repository
+2. Add your environmental variables for `Stripe` and `Pusher`
+3. Add the environmental variable `NEXT_PUBLIC_ENV=PROD`
+4. Deploy and view your website!
