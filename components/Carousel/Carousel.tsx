@@ -1,4 +1,6 @@
-import React, { ReactNode, useLayoutEffect, useState } from 'react';
+import React, { ReactNode, useLayoutEffect, useState, TouchEvent } from 'react';
+import { Subscription } from 'rxjs';
+import { easeSpeed } from '@/utils/functions/easeSpeed';
 import { IconButton } from '@mui/material';
 import LeftArrowIcon from '@/icons/ArrowLeft.svg';
 import RightArrowIcon from '@/icons/ArrowRight.svg';
@@ -18,17 +20,22 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [carouselWidth, setCarouselWidth] = useState(0);
   const [maxOffset, setMaxOffset] = useState(0);
 
+  const [lastDragX, setLastDragX] = useState(0);
+  const [lastDragChange, setLastDragChange] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragEndAnimation, setDragEndAnimation] = useState<Subscription>();
+
+  const updateOffset = (offset: number) => setOffset(Math.max(0, Math.min(offset, maxOffset)));
+
   const CarouselControl = (_props: { direction: 'left' | 'right' }) => {
     const isLeft = _props.direction === 'left';
-    const nextOffset = isLeft
-      ? Math.max(0, offset - carouselWidth)
-      : Math.min(offset + carouselWidth, maxOffset);
+    const nextOffset = isLeft ? offset - carouselWidth : offset + carouselWidth;
 
     return (
       <IconButton
         color="secondary"
         disabled={isLeft ? offset === 0 : offset === maxOffset}
-        onClick={() => setOffset(nextOffset)}
+        onClick={() => updateOffset(nextOffset)}
       >
         {isLeft ? <LeftArrowIcon /> : <RightArrowIcon />}
       </IconButton>
@@ -56,6 +63,46 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     }
   };
 
+  const onDragStart = (event: TouchEvent) => {
+    if (dragEndAnimation) {
+      dragEndAnimation.unsubscribe();
+      setIsDragging(false);
+    }
+
+    setLastDragX(getDragX(event));
+  };
+
+  const onDrag = (event: TouchEvent) => {
+    const dragX = getDragX(event);
+    const dragChange = lastDragX - dragX;
+
+    updateOffset(offset + dragChange);
+    setLastDragX(dragX);
+    setLastDragChange(dragChange);
+    setIsDragging(true);
+  };
+
+  const onDragEnd = () => {
+    // we use lastDragChange as the starting speed of the ease animation
+    if (lastDragChange === 0) {
+      return;
+    }
+
+    const dragEndAnimation = easeSpeed(offset, lastDragChange).subscribe(easingOffset => {
+      if (easingOffset != undefined) {
+        updateOffset(easingOffset);
+      } else {
+        dragEndAnimation.unsubscribe();
+        setIsDragging(false);
+      }
+    });
+
+    setLastDragChange(0);
+    setDragEndAnimation(dragEndAnimation);
+  };
+
+  const getDragX = (event: TouchEvent) => event.changedTouches[0].clientX;
+
   useLayoutEffect(() => {
     onResize();
     window.addEventListener('resize', onResize);
@@ -68,7 +115,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const sliderOffset = carouselWidth && offset && (offset / carouselItemsWidth) * INDICATOR_WIDTH;
 
   return (
-    <div ref={setCarouselRef} className={styles.carousel}>
+    <div ref={setCarouselRef} className={`${styles.carousel} ${isDragging ? styles.dragging : ''}`}>
       <div className={styles.carousel__header}>
         <div className={styles.header__title}>{props.title}</div>
         {maxOffset > 0 && (
@@ -78,9 +125,18 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
           </div>
         )}
       </div>
-      <div className={styles.carousel__items} style={{ marginLeft: -offset }}>
+
+      <div
+        className={styles.carousel__items}
+        style={{ marginLeft: -offset }}
+        onTouchStart={onDragStart}
+        onTouchMove={onDrag}
+        onTouchEnd={onDragEnd}
+        onTouchCancel={onDragEnd}
+      >
         {props.children}
       </div>
+
       <div className={styles.carousel__indicator} style={{ width: INDICATOR_WIDTH }}>
         <div
           className={styles.indicator__slider}

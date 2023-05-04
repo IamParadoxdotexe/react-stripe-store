@@ -6,6 +6,16 @@
   flex-direction: column;
   gap: 12px;
 
+  &.dragging {
+    .carousel__items {
+      transition: none;
+    }
+
+    .carousel__indicator .indicator__slider {
+      transition: none;
+    }
+  }
+
   .carousel__header {
     display: flex;
     align-items: center;
