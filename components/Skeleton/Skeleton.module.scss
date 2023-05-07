@@ -1,0 +1,12 @@
+.skeleton {
+  display: flex;
+  align-items: center;
+
+  .skeleton__inner {
+    @include mix-skeleton;
+
+    .inner__content {
+      opacity: 0;
+    }
+  }
+}

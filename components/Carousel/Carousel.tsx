@@ -2,6 +2,7 @@ import React, { ReactNode, useLayoutEffect, useState, TouchEvent } from 'react';
 import { Subscription } from 'rxjs';
 import { easeSpeed } from '@/utils/functions/easeSpeed';
 import { IconButton } from '@mui/material';
+import { Skeleton } from '@/components/Skeleton';
 import LeftArrowIcon from '@/icons/ArrowLeft.svg';
 import RightArrowIcon from '@/icons/ArrowRight.svg';
 import styles from './Carousel.module.scss';
@@ -9,6 +10,7 @@ import styles from './Carousel.module.scss';
 type CarouselProps = {
   title: string;
   children?: ReactNode | ReactNode[];
+  loading?: boolean;
 };
 
 const INDICATOR_WIDTH = 150;
@@ -117,8 +119,10 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   return (
     <div ref={setCarouselRef} className={`${styles.carousel} ${isDragging ? styles.dragging : ''}`}>
       <div className={styles.carousel__header}>
-        <div className={styles.header__title}>{props.title}</div>
-        {maxOffset > 0 && (
+        <Skeleton className={styles.header__title} loading={props.loading}>
+          {props.title}
+        </Skeleton>
+        {maxOffset > 0 && !props.loading && (
           <div>
             <CarouselControl direction="left" />
             <CarouselControl direction="right" />
@@ -137,12 +141,14 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
         {props.children}
       </div>
 
-      <div className={styles.carousel__indicator} style={{ width: INDICATOR_WIDTH }}>
-        <div
-          className={styles.indicator__slider}
-          style={{ width: sliderWidth, marginLeft: sliderOffset }}
-        />
-      </div>
+      {maxOffset > 0 && (
+        <div className={styles.carousel__indicator} style={{ width: INDICATOR_WIDTH }}>
+          <div
+            className={styles.indicator__slider}
+            style={{ width: sliderWidth, marginLeft: sliderOffset }}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -7,12 +7,13 @@ import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { CartService } from '@/services/CartService';
 import { Button } from '@mui/material';
+import { Skeleton } from '@/components/Skeleton';
 import ShoppingCartAddIcon from '@/icons/ShoppingCartAdd.svg';
 import { useQuantityToggle } from '../useQuantityToggle';
 import styles from './ProductCard.module.scss';
 
 type ProductCardProps = {
-  product: Product;
+  product?: Product;
   variant?: 'vertical' | 'horizontal';
 };
 
@@ -20,18 +21,19 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
   const cart = useServiceState(CartService.cart);
 
   const cartItem = useMemo(
-    () => cart.items.find(cartItem => cartItem.id === props.product.id),
+    () => cart.items.find(cartItem => cartItem.id === props.product?.id),
     [cart]
   );
 
   const variant = props.variant ?? 'vertical';
 
-  const title = getNestedKey(props.product, appConfig.product.titleKey);
-  const subtitle = getNestedKey(props.product, appConfig.product.subtitleKey);
+  const title = getNestedKey(props.product, appConfig.product.titleKey) ?? 'Product Title';
+  const subtitle = getNestedKey(props.product, appConfig.product.subtitleKey) ?? 'Product Subtitle';
+  const stock = getNestedKey(props.product, appConfig.product.stockKey) ?? undefined;
 
   const { QuantityToggle, quantity, setQuantity } = useQuantityToggle({
     initialValue: cartItem?.quantity,
-    max: getNestedKey(props.product, appConfig.product.stockKey)
+    max: stock
   });
 
   const AddToCartButton = () => (
@@ -50,31 +52,39 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
 
   // update cartItem from quantity change
   useEffect(() => {
-    const cartItemQuantity = cartItem?.quantity ?? 0;
-    if (cartItemQuantity != quantity) {
-      CartService.updateCart(props.product, quantity);
+    if (props.product) {
+      const cartItemQuantity = cartItem?.quantity ?? 0;
+      if (cartItemQuantity != quantity) {
+        CartService.updateCart(props.product, quantity);
+      }
     }
   }, [quantity]);
 
+  const loading = !props.product;
+
   return (
     <div className={`${styles.product} ${styles[variant]}`}>
-      <Image
-        className={styles.product__image}
-        src={props.product.images[0]}
-        alt={title}
-        width={240}
-        height={240}
-      />
+      <Skeleton className={styles.product__image} loading={loading}>
+        {props.product && (
+          <Image src={props.product.images[0]} alt={title} width={240} height={240} />
+        )}
+      </Skeleton>
 
       <div className={styles.product__content}>
         <div className={styles.product__info}>
-          <div className={styles.info__title}>{title}</div>
-          <div className={styles.info__subtitle}>{subtitle}</div>
+          <Skeleton className={styles.info__title} loading={loading}>
+            {title}
+          </Skeleton>
+          <Skeleton className={styles.info__subtitle} loading={loading}>
+            {subtitle}
+          </Skeleton>
         </div>
 
         <div className={styles.product__price}>
-          {formatMoney(props.product.price.amount)}
-          {cartItem?.quantity ? <QuantityToggle /> : <AddToCartButton />}
+          <Skeleton loading={loading}>
+            {props.product ? formatMoney(props.product.price.amount) : '$00.00'}
+          </Skeleton>
+          {!loading && (cartItem?.quantity ? <QuantityToggle /> : <AddToCartButton />)}
         </div>
       </div>
     </div>
