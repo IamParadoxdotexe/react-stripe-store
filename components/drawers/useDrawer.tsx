@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { DrawerService, DrawerType } from '@/services/DrawerService';
 import { Drawer as MuiDrawer } from '@mui/material';
-import { CartDrawer } from './CartDrawer/CartDrawer';
+import { CartDrawer } from './CartDrawer';
 
 const DRAWER_CONTENTS: { [key in DrawerType]: ReactNode } = {
   CART: <CartDrawer />

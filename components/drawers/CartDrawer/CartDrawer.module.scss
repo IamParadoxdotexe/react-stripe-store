@@ -10,9 +10,18 @@ $drawer-width: 600px;
 
   @media screen and (min-width: $drawer-width) {
     padding: 36px 48px;
+
+    .drawer__header button {
+      display: none;
+    }
   }
 
   .drawer__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+
     .header__title {
       @include text-h3;
     }
@@ -26,6 +35,28 @@ $drawer-width: 600px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .drawer__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 18px;
+
+    svg {
+      color: color-primary(8);
+      max-width: 400px;
+    }
+
+    .empty__title {
+      @include text-h4;
+    }
+
+    .empty__subtitle {
+      @include text-h6;
+      max-width: 360px;
+    }
   }
 
   .drawer__checkout {
