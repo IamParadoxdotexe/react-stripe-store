@@ -29,10 +29,15 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [carouselWidth, setCarouselWidth] = useState(0);
   const [maxOffset, setMaxOffset] = useState(0);
 
-  const [startDragXY, setStartDragXY] = useState<[number, number]>([0, 0]);
-  const [lastDragX, setLastDragX] = useState(0);
-  const [lastDragChange, setLastDragChange] = useState(0);
+  // when isDragging = true, carousel can move
   const [isDragging, setIsDragging] = useState<boolean>();
+  // startDragXY is used to different drag from vertical scroll
+  const [startDragXY, setStartDragXY] = useState<[number, number]>([0, 0]);
+
+  // polling lastDragX is used to compute speed for drag end animation
+  const [lastDragX, setLastDragX] = useState(0);
+  const [polledLastDragX, setPolledLastDragX] = useState<number[]>([]);
+  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timer>();
 
   const [dragEndAnimation, setDragEndAnimation] = useState<Subscription>();
 
@@ -125,19 +130,21 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       // drag carousel
       updateOffset(offset + dragChange);
       setLastDragX(dragXY[0]);
-      setLastDragChange(dragChange);
     },
     [offset, lastDragX, isDragging]
   );
 
   const onDragEnd = () => {
-    // we use lastDragChange as the starting speed of the ease animation
-    if (!isDragging || lastDragChange === 0) {
+    // skip animation in the vertical scroll case
+    if (!isDragging) {
       setIsDragging(undefined);
       return;
     }
 
-    const dragEndAnimation = easeSpeed(offset, lastDragChange).subscribe(easingOffset => {
+    const totalDragXChange = polledLastDragX.at(-1)! - polledLastDragX[0];
+    const speed = totalDragXChange / polledLastDragX.length;
+
+    const dragEndAnimation = easeSpeed(offset, speed).subscribe(easingOffset => {
       if (easingOffset != undefined) {
         updateOffset(easingOffset);
       } else {
@@ -146,7 +153,6 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       }
     });
 
-    setLastDragChange(0);
     setDragEndAnimation(dragEndAnimation);
   };
 
@@ -168,6 +174,35 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       ref.current.ontouchmove = event => onDrag(event);
     }
   }, [ref, onDrag]);
+
+  useLayoutEffect(() => {
+    // poll last X position to calculate speed
+    const poll = () => {
+      setPolledLastDragX(polledLastDragX => {
+        if (polledLastDragX.length > 1) {
+          const direction = Math.sign(polledLastDragX[0] - polledLastDragX[1]);
+          const currentDirection = Math.sign(lastDragX - polledLastDragX[0]);
+
+          // reset array when changing direction
+          if (direction != currentDirection) {
+            return [lastDragX];
+          }
+        }
+
+        return [lastDragX, ...polledLastDragX];
+      });
+    };
+
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      setPollingInterval(undefined);
+    }
+
+    if (isDragging) {
+      poll();
+      setPollingInterval(setInterval(poll, 10));
+    }
+  }, [isDragging, lastDragX]);
 
   const sliderWidth =
     carouselWidth && carouselItemsWidth && (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
