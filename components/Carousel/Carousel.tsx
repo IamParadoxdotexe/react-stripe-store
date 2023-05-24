@@ -35,7 +35,9 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [startDragXY, setStartDragXY] = useState<[number, number]>([0, 0]);
 
   // polling lastDragX is used to compute speed for drag end animation
-  const [lastDragX, setLastDragX] = useState(0);
+  const [lastDragX, setLastDragX] = useState({
+    value: 0
+  });
   const [polledLastDragX, setPolledLastDragX] = useState<number[]>([]);
   const [pollingInterval, setPollingInterval] = useState<NodeJS.Timer>();
 
@@ -85,11 +87,12 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     if (dragEndAnimation) {
       dragEndAnimation.unsubscribe();
       setIsDragging(undefined);
+      setPolledLastDragX([]);
     }
 
     const dragXY = getDragXY(event);
     setStartDragXY(dragXY);
-    setLastDragX(dragXY[0]);
+    setLastDragX({ value: dragXY[0] });
   };
 
   const onDrag = useCallback(
@@ -103,40 +106,35 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
       const dragXY = getDragXY(event);
 
-      const totalDragChangeX = Math.abs(startDragXY[0] - dragXY[0]);
-      const totalDragChangeY = Math.abs(startDragXY[1] - dragXY[1]);
-
       if (isDragging === undefined) {
-        // wait for large enough drag before determining isDragging
-        if (totalDragChangeX < 1) {
+        const totalDragChangeX = Math.abs(startDragXY[0] - dragXY[0]);
+        const totalDragChangeY = Math.abs(startDragXY[1] - dragXY[1]);
+
+        // check for vertical scroll
+        const isVerticallyScrolling = totalDragChangeY > totalDragChangeX;
+
+        setIsDragging(!isVerticallyScrolling);
+
+        if (isVerticallyScrolling) {
           return;
-        } else {
-          // check for vertical scroll
-          const isVerticallyScrolling = totalDragChangeY > 7.5;
-
-          setIsDragging(!isVerticallyScrolling);
-
-          if (isVerticallyScrolling) {
-            return;
-          }
         }
       }
 
       // prevent vertical scroll while dragging
       event.preventDefault();
 
-      const dragChange = lastDragX - dragXY[0];
+      const dragChange = lastDragX.value - dragXY[0];
 
       // drag carousel
       updateOffset(offset + dragChange);
-      setLastDragX(dragXY[0]);
+      setLastDragX({ value: dragXY[0] });
     },
     [offset, lastDragX, isDragging]
   );
 
   const onDragEnd = () => {
     // skip animation in the vertical scroll case
-    if (!isDragging) {
+    if (!isDragging || !polledLastDragX.length) {
       setIsDragging(undefined);
       return;
     }
@@ -150,6 +148,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       } else {
         dragEndAnimation.unsubscribe();
         setIsDragging(undefined);
+        setPolledLastDragX([]);
       }
     });
 
@@ -176,33 +175,36 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   }, [ref, onDrag]);
 
   useLayoutEffect(() => {
-    // poll last X position to calculate speed
-    const poll = () => {
-      setPolledLastDragX(polledLastDragX => {
-        if (polledLastDragX.length > 1) {
-          const direction = Math.sign(polledLastDragX[0] - polledLastDragX[1]);
-          const currentDirection = Math.sign(lastDragX - polledLastDragX[0]);
+    if (isDragging) {
+      // poll last X position to calculate speed
+      console.time('polling');
+      setPollingInterval(
+        setInterval(() => {
+          setLastDragX(lastDragX => {
+            setPolledLastDragX(polledLastDragX => {
+              if (polledLastDragX.length > 1) {
+                const direction = Math.sign(polledLastDragX.at(-1)! - polledLastDragX[0]);
+                const currentDirection = Math.sign(polledLastDragX[0] - lastDragX.value);
 
-          // reset array when changing direction
-          if (direction != currentDirection) {
-            return [lastDragX];
-          }
-        }
+                // reset array when changing direction
+                if (direction && direction === -currentDirection) {
+                  return [lastDragX.value];
+                }
+              }
 
-        return [lastDragX, ...polledLastDragX].slice(0, 100);
-      });
-    };
+              return [lastDragX.value, ...polledLastDragX].slice(0, 30);
+            });
 
-    if (pollingInterval) {
+            // don't actually update lastDragX, we just wanted up-to-date value
+            return lastDragX;
+          });
+        }, 5)
+      );
+    } else if (pollingInterval) {
       clearInterval(pollingInterval);
       setPollingInterval(undefined);
     }
-
-    if (isDragging) {
-      poll();
-      setPollingInterval(setInterval(poll, 10));
-    }
-  }, [isDragging, lastDragX]);
+  }, [isDragging]);
 
   const sliderWidth =
     carouselWidth && carouselItemsWidth && (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
