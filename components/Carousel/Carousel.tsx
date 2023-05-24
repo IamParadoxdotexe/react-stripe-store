@@ -22,6 +22,9 @@ type CarouselProps = {
 
 const INDICATOR_WIDTH = 150;
 
+const POLLING_SIZE = 3;
+const POLLING_RATE_MS = 10;
+
 export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [offset, setOffset] = useState(0);
   const [carouselRef, setCarouselRef] = useState<HTMLDivElement | null>();
@@ -180,21 +183,14 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       setPollingInterval(
         setInterval(() => {
           setLastDragX(lastDragX => {
-            setPolledLastDragX(polledLastDragX => {
-              if (polledLastDragX.length) {
-                // reset array when stopping
-                if (polledLastDragX[0] === lastDragX.value) {
-                  return [lastDragX.value];
-                }
-              }
-
-              return [lastDragX.value, ...polledLastDragX].slice(0, 10);
-            });
+            setPolledLastDragX(polledLastDragX =>
+              [lastDragX.value, ...polledLastDragX].slice(0, POLLING_SIZE)
+            );
 
             // don't actually update lastDragX, we just wanted up-to-date value
             return lastDragX;
           });
-        }, 10)
+        }, POLLING_RATE_MS)
       );
     } else if (pollingInterval) {
       clearInterval(pollingInterval);
