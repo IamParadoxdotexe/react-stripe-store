@@ -136,7 +136,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
   const onDragEnd = () => {
     // skip animation in the vertical scroll case
-    if (!isDragging || polledLastDragX.length < 5) {
+    if (!isDragging) {
       setIsDragging(undefined);
       return;
     }
@@ -189,7 +189,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
           }
         }
 
-        return [lastDragX, ...polledLastDragX].slice(0, 20);
+        return [lastDragX, ...polledLastDragX].slice(0, 100);
       });
     };
 
