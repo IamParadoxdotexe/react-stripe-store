@@ -177,28 +177,24 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   useLayoutEffect(() => {
     if (isDragging) {
       // poll last X position to calculate speed
-      console.time('polling');
       setPollingInterval(
         setInterval(() => {
           setLastDragX(lastDragX => {
             setPolledLastDragX(polledLastDragX => {
-              if (polledLastDragX.length > 1) {
-                const direction = Math.sign(polledLastDragX.at(-1)! - polledLastDragX[0]);
-                const currentDirection = Math.sign(polledLastDragX[0] - lastDragX.value);
-
-                // reset array when changing direction
-                if (direction && direction === -currentDirection) {
+              if (polledLastDragX.length) {
+                // reset array when stopping
+                if (polledLastDragX[0] === lastDragX.value) {
                   return [lastDragX.value];
                 }
               }
 
-              return [lastDragX.value, ...polledLastDragX].slice(0, 30);
+              return [lastDragX.value, ...polledLastDragX].slice(0, 10);
             });
 
             // don't actually update lastDragX, we just wanted up-to-date value
             return lastDragX;
           });
-        }, 5)
+        }, 10)
       );
     } else if (pollingInterval) {
       clearInterval(pollingInterval);
