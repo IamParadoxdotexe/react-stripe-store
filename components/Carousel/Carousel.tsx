@@ -1,4 +1,11 @@
-import React, { ReactNode, useLayoutEffect, useState, TouchEvent } from 'react';
+import React, {
+  ReactNode,
+  useLayoutEffect,
+  useState,
+  TouchEvent as ReactTouchEvent,
+  useRef,
+  useCallback
+} from 'react';
 import { Subscription } from 'rxjs';
 import { easeSpeed } from '@/utils/functions/easeSpeed';
 import { IconButton } from '@mui/material';
@@ -22,10 +29,14 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [carouselWidth, setCarouselWidth] = useState(0);
   const [maxOffset, setMaxOffset] = useState(0);
 
+  const [startDragXY, setStartDragXY] = useState<[number, number]>([0, 0]);
   const [lastDragX, setLastDragX] = useState(0);
   const [lastDragChange, setLastDragChange] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState<boolean>();
+
   const [dragEndAnimation, setDragEndAnimation] = useState<Subscription>();
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const updateOffset = (offset: number) => setOffset(Math.max(0, Math.min(offset, maxOffset)));
 
@@ -65,28 +76,64 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     }
   };
 
-  const onDragStart = (event: TouchEvent) => {
+  const onDragStart = (event: ReactTouchEvent) => {
     if (dragEndAnimation) {
       dragEndAnimation.unsubscribe();
-      setIsDragging(false);
+      setIsDragging(undefined);
     }
 
-    setLastDragX(getDragX(event));
+    const dragXY = getDragXY(event);
+    setStartDragXY(dragXY);
+    setLastDragX(dragXY[0]);
   };
 
-  const onDrag = (event: TouchEvent) => {
-    const dragX = getDragX(event);
-    const dragChange = lastDragX - dragX;
+  const onDrag = useCallback(
+    (event: TouchEvent) => {
+      if (isDragging === false) {
+        return;
+      } else if (isDragging === true && !event.cancelable) {
+        // if event becomes not cancelable while dragging, abort
+        setIsDragging(false);
+      }
 
-    updateOffset(offset + dragChange);
-    setLastDragX(dragX);
-    setLastDragChange(dragChange);
-    setIsDragging(true);
-  };
+      const dragXY = getDragXY(event);
+
+      const totalDragChangeX = Math.abs(startDragXY[0] - dragXY[0]);
+      const totalDragChangeY = Math.abs(startDragXY[1] - dragXY[1]);
+
+      if (isDragging === undefined) {
+        // wait for large enough drag before determining isDragging
+        if (totalDragChangeX < 20) {
+          return;
+        } else {
+          // check for vertical scroll
+          const isVerticallyScrolling = totalDragChangeY > 10;
+
+          setIsDragging(!isVerticallyScrolling);
+
+          if (isVerticallyScrolling) {
+            return;
+          }
+        }
+      }
+
+      // prevent vertical scroll while dragging
+      event.preventDefault();
+
+      const dragChange = lastDragX - dragXY[0];
+
+      // drag carousel
+      updateOffset(offset + dragChange);
+      setLastDragX(dragXY[0]);
+      setLastDragChange(dragChange);
+    },
+    [offset, lastDragX, isDragging]
+  );
 
   const onDragEnd = () => {
     // we use lastDragChange as the starting speed of the ease animation
-    if (lastDragChange === 0) {
+    if (!isDragging || lastDragChange === 0) {
+      setIsDragging(undefined);
       return;
     }
 
@@ -95,7 +142,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
         updateOffset(easingOffset);
       } else {
         dragEndAnimation.unsubscribe();
-        setIsDragging(false);
+        setIsDragging(undefined);
       }
     });
 
@@ -103,7 +150,10 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     setDragEndAnimation(dragEndAnimation);
   };
 
-  const getDragX = (event: TouchEvent) => event.changedTouches[0].clientX;
+  const getDragXY = (event: TouchEvent | ReactTouchEvent): [number, number] => {
+    const touch = event.changedTouches[0];
+    return [touch.clientX, touch.clientY];
+  };
 
   useLayoutEffect(() => {
     onResize();
@@ -111,6 +161,13 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
     return () => window.removeEventListener('resize', onResize);
   }, [carouselRef, props.children]);
+
+  useLayoutEffect(() => {
+    // manually bind onTouchMove to support preventDefault
+    if (ref.current) {
+      ref.current.ontouchmove = event => onDrag(event);
+    }
+  }, [ref, onDrag]);
 
   const sliderWidth =
     carouselWidth && carouselItemsWidth && (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
@@ -131,10 +188,10 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       </div>
 
       <div
+        ref={ref}
         className={styles.carousel__items}
         style={{ marginLeft: -offset }}
         onTouchStart={onDragStart}
-        onTouchMove={onDrag}
         onTouchEnd={onDragEnd}
         onTouchCancel={onDragEnd}
       >
