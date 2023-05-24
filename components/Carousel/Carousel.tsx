@@ -108,11 +108,11 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
       if (isDragging === undefined) {
         // wait for large enough drag before determining isDragging
-        if (totalDragChangeX < 20) {
+        if (totalDragChangeX < 1) {
           return;
         } else {
           // check for vertical scroll
-          const isVerticallyScrolling = totalDragChangeY > 10;
+          const isVerticallyScrolling = totalDragChangeY > 7.5;
 
           setIsDragging(!isVerticallyScrolling);
 
