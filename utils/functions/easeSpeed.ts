@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 
 const FRAME_RATE = 10; // affects rate of ease
-const FRAMES = 60; // affects distance of ease
+const FRAMES = 40; // affects distance of ease
 
 /**
  * Ease a value changing at a rate of speed to a stop.
