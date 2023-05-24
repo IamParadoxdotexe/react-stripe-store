@@ -56,7 +56,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
     return (
       <IconButton
-        color="secondary"
+        color="primary"
         disabled={isLeft ? offset === 0 : offset === maxOffset}
         onClick={() => updateOffset(nextOffset)}
       >
@@ -145,7 +145,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     const totalDragXChange = polledLastDragX.at(-1)! - polledLastDragX[0];
     const speed = totalDragXChange / polledLastDragX.length;
 
-    const dragEndAnimation = easeSpeed(offset, speed).subscribe(easingOffset => {
+    const dragEndAnimation = easeSpeed(offset, speed, 60, 8).subscribe(easingOffset => {
       if (easingOffset != undefined) {
         updateOffset(easingOffset);
       } else {
@@ -229,10 +229,12 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
       {maxOffset > 0 && (
         <div className={styles.carousel__indicator} style={{ width: INDICATOR_WIDTH }}>
-          <div
-            className={styles.indicator__slider}
-            style={{ width: sliderWidth, marginLeft: sliderOffset }}
-          />
+          {!props.loading && (
+            <div
+              className={styles.indicator__slider}
+              style={{ width: sliderWidth, marginLeft: sliderOffset }}
+            />
+          )}
         </div>
       )}
     </div>

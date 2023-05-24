@@ -1,0 +1,12 @@
+.normal {
+  color: color-dark(4);
+}
+
+.fab {
+  > span {
+    z-index: 10000;
+    top: 10px;
+    right: 10px;
+    pointer-events: none;
+  }
+}

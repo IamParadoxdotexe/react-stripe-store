@@ -4,7 +4,6 @@ import { useServiceState } from '@/utils/hooks/useServiceState';
 import { ProductService } from '@/services/ProductService';
 import { Carousel } from '@/components/Carousel';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
-import { Splash } from '@/components/Splash';
 import styles from './home.module.scss';
 
 export default function Home() {
@@ -15,7 +14,6 @@ export default function Home() {
 
   return (
     <div className={styles.home}>
-      <Splash />
       <Carousel title="Featured Cups" loading={arrayOfProductsLoading}>
         {!arrayOfProductsLoading &&
           arrayOf(products).map(product => <ProductCard key={product.id} product={product} />)}
