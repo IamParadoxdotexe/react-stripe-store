@@ -1,0 +1,22 @@
+.search {
+  @include mix-framework;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .search__header {
+    .header__title {
+      @include text-h3;
+    }
+
+    .header__subtitle {
+      @include text-h6;
+    }
+  }
+
+  .search__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+  }
+}

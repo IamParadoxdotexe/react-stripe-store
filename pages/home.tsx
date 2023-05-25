@@ -16,7 +16,7 @@ export default function Home() {
     <div className={styles.home}>
       <Carousel title="Featured Cups" loading={arrayOfProductsLoading}>
         {!arrayOfProductsLoading &&
-          arrayOf(products).map(product => <ProductCard key={product.id} product={product} />)}
+          arrayOfProducts.map(product => <ProductCard key={product.id} product={product} />)}
         {arrayOfProductsLoading && generateKeys(20).map(i => <ProductCard key={i} />)}
       </Carousel>
     </div>

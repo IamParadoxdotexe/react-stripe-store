@@ -1,5 +1,7 @@
+import Fuse from 'fuse.js';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
+import { arrayOf } from '@/utils/functions/arrayOf';
 import { dictOf } from '@/utils/functions/dictOf';
 import { getUrl } from '@/utils/functions/getUrl';
 
@@ -16,6 +18,15 @@ export const ProductService = new (class {
       .then((products: Product[]) => {
         this.products.next(dictOf(products, 'id'));
       });
+  }
+
+  public search(query: string): Product[] {
+    const fuse = new Fuse(arrayOf(this.products.value), {
+      keys: ['name', 'description']
+    });
+
+    const results = fuse.search(query);
+    return results.map(result => result.item);
   }
 
   public onProductUpdated(product: Product) {
