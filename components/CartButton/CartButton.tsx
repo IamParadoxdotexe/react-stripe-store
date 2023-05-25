@@ -7,7 +7,7 @@ import ShoppingCartIcon from '@/icons/ShoppingCart.svg';
 import styles from './CartButton.module.scss';
 
 type CartButtonProps = {
-  type: 'normal' | 'fab';
+  type?: 'normal' | 'fab';
 };
 
 export const CartButton: React.FC<CartButtonProps> = (props: CartButtonProps) => {
