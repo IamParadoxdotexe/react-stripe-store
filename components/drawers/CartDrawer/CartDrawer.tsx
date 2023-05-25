@@ -7,6 +7,7 @@ import { DrawerService } from '@/services/DrawerService';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Alert, IconButton } from '@mui/material';
 import { ProductCard } from '@/components/ProductCard';
+import { Visual } from '@/components/Visual';
 import CancelIcon from '@/icons/Cancel.svg';
 import EmptyCartVisual from '@/visuals/EmptyCart.svg';
 import styles from './CartDrawer.module.scss';
@@ -47,13 +48,11 @@ export const CartDrawer: React.FC = () => {
       )}
 
       {cart.count === 0 && (
-        <div className={styles.drawer__empty}>
-          <EmptyCartVisual />
-          <div className={styles.empty__title}>Your cart is empty!</div>
-          <div className={styles.empty__subtitle}>
-            Try searching for a product by name or viewing featured products on the home page.
-          </div>
-        </div>
+        <Visual
+          visual={<EmptyCartVisual />}
+          title="Your cart is empty!"
+          subtitle="Try searching for a product by name or viewing featured products on the home page."
+        />
       )}
 
       {cart.count > 0 && (

@@ -17,7 +17,7 @@ export const NavBar: React.FC = () => {
 
   return (
     <div className={styles.navBar}>
-      Business Name
+      <div onClick={() => router.push('/')}>Business Name</div>
       <div className={styles.navBar__right}>
         <TextField
           placeholder="Search"

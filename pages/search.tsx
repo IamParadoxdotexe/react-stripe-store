@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { generateKeys } from '@/utils/functions/generateKeys';
 import { ProductService } from '@/services/ProductService';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
+import { Visual } from '@/components/Visual';
+import NoResultsVisual from '@/visuals/NoResults.svg';
 import { Product } from './api/stripe/products';
 import styles from './search.module.scss';
 
@@ -23,12 +25,20 @@ export default function Search() {
       <div className={styles.search__header}>
         <div className={styles.header__title}>Search Results</div>
         <div className={styles.header__subtitle}>
-          {products?.length} products matching "{query}"
+          {products?.length} results found matching "{query}"
         </div>
       </div>
       <div className={styles.search__grid}>
         {products && products.map(product => <ProductCard key={product.id} product={product} />)}
         {!products && generateKeys(20).map(i => <ProductCard key={i} />)}
+
+        {products && !products.length && (
+          <Visual
+            visual={<NoResultsVisual />}
+            title="No results found!"
+            subtitle='Try searching for something less specific, like "cup".'
+          />
+        )}
       </div>
     </div>
   );
