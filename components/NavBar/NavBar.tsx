@@ -10,7 +10,7 @@ export const NavBar: React.FC = () => {
   const [query, setQuery] = useState('');
 
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.code === 'Enter' && query.length) {
+    if (event.key === 'Enter' && query.length) {
       router.push(`/search?query=${query}`);
     }
   };
