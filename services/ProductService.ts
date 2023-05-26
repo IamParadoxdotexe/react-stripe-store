@@ -1,4 +1,6 @@
+import clipboardCopy from 'clipboard-copy';
 import Fuse from 'fuse.js';
+import isEqual from 'lodash/isEqual';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
 import { arrayOf } from '@/utils/functions/arrayOf';
@@ -27,6 +29,31 @@ export const ProductService = new (class {
 
     const results = fuse.search(query);
     return results.map(result => result.item);
+  }
+
+  public async create(product: Product) {
+    // check if product already exists with same values
+    if (product.id && isEqual(product, this.products.value[product.id])) {
+      return;
+    }
+
+    await fetch(getUrl('/api/stripe/products/create'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(product)
+    });
+  }
+
+  public export() {
+    const rows: (string | undefined)[][] = [['id', 'price', 'name', 'description']];
+
+    for (const product of arrayOf(this.products.value)) {
+      rows.push([product.id, `${product.price.amount}`, product.name, product.description]);
+    }
+
+    clipboardCopy(rows.map(row => row.join('\t')).join('\n'));
   }
 
   public onProductUpdated(product: Product) {
