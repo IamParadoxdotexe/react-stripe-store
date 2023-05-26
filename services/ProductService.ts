@@ -1,6 +1,5 @@
 import clipboardCopy from 'clipboard-copy';
 import Fuse from 'fuse.js';
-import isEqual from 'lodash/isEqual';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
 import { arrayOf } from '@/utils/functions/arrayOf';
@@ -32,11 +31,6 @@ export const ProductService = new (class {
   }
 
   public async create(product: Product) {
-    // check if product already exists with same values
-    if (product.id && isEqual(product, this.products.value[product.id])) {
-      return;
-    }
-
     await fetch(getUrl('/api/stripe/products/create'), {
       method: 'POST',
       headers: {
@@ -47,10 +41,32 @@ export const ProductService = new (class {
   }
 
   public export() {
-    const rows: (string | undefined)[][] = [['id', 'price', 'name', 'description']];
+    const rows: (string | undefined)[][] = [['id', 'price', 'name', 'description', 'images']];
+
+    const metadataIndices: { [key: string]: number } = {};
 
     for (const product of arrayOf(this.products.value)) {
-      rows.push([product.id, `${product.price.amount}`, product.name, product.description]);
+      const row = [
+        product.id,
+        `${product.price.amount}`,
+        product.name,
+        product.description,
+        product.images.join(',')
+      ];
+
+      // look for metadata
+      for (const [key, value] of Object.entries(product.metadata)) {
+        // add new metadata header if needed
+        if (!metadataIndices[key]) {
+          metadataIndices[key] = rows[0].length;
+          rows[0].push(`metadata.${key}`);
+        }
+
+        // add metadata value to correct index (can create sparse array)
+        row[metadataIndices[key]] = value;
+      }
+
+      rows.push(row);
     }
 
     clipboardCopy(rows.map(row => row.join('\t')).join('\n'));

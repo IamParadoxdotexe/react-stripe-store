@@ -45,6 +45,8 @@ export default async function handler(req: CreateProductRequest, res: NextApiRes
     await stripe.products.update(req.body.id, {
       name: req.body.name,
       description: req.body.description,
+      images: req.body.images,
+      metadata: req.body.metadata,
       default_price: matchingPrice.id
     });
   } else {
@@ -53,6 +55,8 @@ export default async function handler(req: CreateProductRequest, res: NextApiRes
       id: req.body.id || undefined,
       name: req.body.name,
       description: req.body.description,
+      images: req.body.images,
+      metadata: req.body.metadata,
       default_price_data: {
         currency: 'USD',
         unit_amount: unitAmount
