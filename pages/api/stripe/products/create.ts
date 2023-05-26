@@ -15,6 +15,38 @@ export default async function handler(req: CreateProductRequest, res: NextApiRes
     return res.status(400).json({ detail: 'No product data provided.' });
   }
 
+  let images = req.body.images;
+
+  // upload new image file if needed
+  if (images[0] && images[0].startsWith('data:image/png;base64')) {
+    // remove data:image/png;base64
+    const base64 = Buffer.from(images[0].split(',')[1], 'base64');
+
+    const name = `${req.body.name} ${req.body.description}`.toLowerCase().replace(/ /g, '-');
+
+    const file = await stripe.files.create({
+      file: {
+        data: base64,
+        name: `${name}.png`,
+        type: 'image/png'
+      },
+      purpose: 'product_image',
+      // creates public link
+      file_link_data: {
+        create: true
+      }
+    });
+
+    images = [file.links?.data[0].url!];
+  }
+
+  const baseProduct = {
+    name: req.body.name,
+    description: req.body.description,
+    images,
+    metadata: req.body.metadata
+  };
+
   const unitAmount = req.body.price.amount * 100;
 
   if (req.body.id) {
@@ -43,20 +75,13 @@ export default async function handler(req: CreateProductRequest, res: NextApiRes
 
     // update existing product
     await stripe.products.update(req.body.id, {
-      name: req.body.name,
-      description: req.body.description,
-      images: req.body.images,
-      metadata: req.body.metadata,
+      ...baseProduct,
       default_price: matchingPrice.id
     });
   } else {
     // create new product
     await stripe.products.create({
-      id: req.body.id || undefined,
-      name: req.body.name,
-      description: req.body.description,
-      images: req.body.images,
-      metadata: req.body.metadata,
+      ...baseProduct,
       default_price_data: {
         currency: 'USD',
         unit_amount: unitAmount

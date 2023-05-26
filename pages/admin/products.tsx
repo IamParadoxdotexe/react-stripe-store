@@ -80,6 +80,19 @@ export default function Products() {
     }
   };
 
+  const onImageUpload = async (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const fileReader = new FileReader();
+
+      fileReader.addEventListener('load', () => {
+        //const image = event.target?.result;
+      });
+
+      fileReader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div>
       <input
@@ -87,9 +100,12 @@ export default function Products() {
         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         onInput={onImport}
       />
+
       <Button color="primary" onClick={() => ProductService.export()}>
         Copy products data
       </Button>
+
+      <input type="file" accept="image/png" onInput={onImageUpload} />
     </div>
   );
 }
