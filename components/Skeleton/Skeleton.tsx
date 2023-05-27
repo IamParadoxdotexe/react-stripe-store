@@ -4,6 +4,7 @@ import styles from './Skeleton.module.scss';
 type SkeletonProps = {
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
   loading?: boolean;
 };
 
@@ -34,12 +35,18 @@ export const Skeleton: React.FC<SkeletonProps> = (props: SkeletonProps) => {
   return props.loading ? (
     <div className={styles.skeleton} style={{ ...skeletonStyle, opacity: ref.current ? 1 : 0 }}>
       <div className={styles.skeleton__inner} style={skeletonContentStyle}>
-        <div className={`${props.className} ${styles.inner__content}`} ref={ref}>
+        <div
+          className={`${props.className} ${styles.inner__content}`}
+          style={props.style}
+          ref={ref}
+        >
           {props.children}
         </div>
       </div>
     </div>
   ) : (
-    <div className={props.className}>{props.children}</div>
+    <div className={props.className} style={props.style}>
+      {props.children}
+    </div>
   );
 };

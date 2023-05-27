@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React, { useEffect, useMemo } from 'react';
 import { Product } from '@/pages/api/stripe/products';
 import appConfig from '@/utils/constants/appConfig';
@@ -11,6 +10,7 @@ import { Skeleton } from '@/components/Skeleton';
 import ShoppingCartAddIcon from '@/icons/ShoppingCartAdd.svg';
 import { useQuantityToggle } from '../useQuantityToggle';
 import styles from './ProductCard.module.scss';
+import { ProductCardImage } from './ProductCardImage';
 
 type ProductCardProps = {
   product?: Product;
@@ -69,11 +69,12 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
       className={`${styles.product} ${styles[variant]} ${props.onClick ? styles.clickable : ''}`}
       onClick={props.onClick}
     >
-      <Skeleton className={styles.product__image} loading={loading}>
-        {props.product && (
-          <Image src={props.product.images[0]} alt={title} width={240} height={240} />
-        )}
-      </Skeleton>
+      <ProductCardImage
+        src={props.product?.images[0]}
+        alt={title}
+        loading={loading}
+        size={props.variant === 'horizontal' ? 94 : 240}
+      />
 
       <div className={styles.product__content}>
         <div className={styles.product__info}>
