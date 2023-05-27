@@ -1,0 +1,40 @@
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &:hover {
+    .input__field {
+      box-shadow: 0 0 0 2px color-light(3);
+    }
+  }
+
+  &:focus-within {
+    label {
+      color: color-primary(5);
+    }
+
+    .input__field {
+      box-shadow: 0 0 0 2px color-primary(5);
+    }
+  }
+
+  label {
+    @include text-h6;
+    transition: color 150ms ease;
+  }
+
+  .input__field {
+    background-color: color-light(2);
+    border-radius: $border-radius;
+    transition: box-shadow 150ms ease;
+
+    svg {
+      color: color-light(6);
+    }
+
+    fieldset {
+      border: none;
+    }
+  }
+}

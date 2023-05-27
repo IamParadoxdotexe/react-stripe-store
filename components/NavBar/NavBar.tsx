@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { KeyboardEvent, useState } from 'react';
-import { InputAdornment, TextField } from '@mui/material';
 import { CartButton } from '@/components/CartButton';
+import { TextInput } from '@/components/TextInput';
 import SearchIcon from '@/icons/Search.svg';
 import styles from './NavBar.module.scss';
 
@@ -22,18 +22,11 @@ export const NavBar: React.FC = () => {
       <div onClick={() => router.push('/')}>Business Name</div>
       {!isAdminPath && (
         <div className={styles.navBar__right}>
-          <TextField
+          <TextInput
             placeholder="Search"
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              )
-            }}
-            className={styles.right__search}
-            onChange={e => setQuery(e.target.value)}
+            value={query}
+            onChange={setQuery}
+            startAdornment={<SearchIcon />}
             onKeyDown={onKeyDown}
           />
           <CartButton />
