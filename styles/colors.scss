@@ -2,6 +2,7 @@ $_black: #121212;
 $_white: #fefefe;
 $_primary: #77a6f7;
 $_secondary: #484349;
+$_error: #f56161;
 
 $_color-step: 6%;
 
@@ -38,4 +39,8 @@ $_normal_hue_index: 5;
 
 @function color-secondary($i) {
   @return _color-hue($_secondary, $i);
+}
+
+@function color-error($i) {
+  @return _color-hue($_error, $i);
 }

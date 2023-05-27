@@ -26,7 +26,7 @@ export const NavBar: React.FC = () => {
             placeholder="Search"
             value={query}
             onChange={setQuery}
-            startAdornment={<SearchIcon />}
+            adornments={{ start: <SearchIcon /> }}
             onKeyDown={onKeyDown}
           />
           <CartButton />

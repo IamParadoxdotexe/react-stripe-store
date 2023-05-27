@@ -19,6 +19,16 @@
     }
   }
 
+  &.error {
+    label {
+      color: color-error(5);
+    }
+
+    .input__field {
+      box-shadow: 0 0 0 2px color-error(5);
+    }
+  }
+
   label {
     @include text-h6;
     transition: color 150ms ease;
