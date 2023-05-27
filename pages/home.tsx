@@ -7,17 +7,16 @@ import { ProductCard } from '@/components/ProductCard/ProductCard';
 import styles from './home.module.scss';
 
 export default function Home() {
-  const products = useServiceState(ProductService.products);
+  const _products = useServiceState(ProductService.products);
 
-  const arrayOfProducts = arrayOf(products);
-  const arrayOfProductsLoading = !arrayOfProducts.length;
+  const products = arrayOf(_products);
+  const loading = !products.length;
 
   return (
     <div className={styles.home}>
-      <Carousel title="Featured Cups" loading={arrayOfProductsLoading}>
-        {!arrayOfProductsLoading &&
-          arrayOfProducts.map(product => <ProductCard key={product.id} product={product} />)}
-        {arrayOfProductsLoading && generateKeys(20).map(i => <ProductCard key={i} />)}
+      <Carousel title="Featured Cups" loading={loading}>
+        {!loading && products.map(product => <ProductCard key={product.id} product={product} />)}
+        {loading && generateKeys(20).map(i => <ProductCard key={i} />)}
       </Carousel>
     </div>
   );

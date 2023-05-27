@@ -1,0 +1,22 @@
+.products {
+  @include mix-framework;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .products__header {
+    .header__title {
+      @include text-h3;
+    }
+
+    .header__subtitle {
+      @include text-h6;
+    }
+  }
+
+  .products__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+}

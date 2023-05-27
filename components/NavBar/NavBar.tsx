@@ -15,26 +15,30 @@ export const NavBar: React.FC = () => {
     }
   };
 
+  const isAdminPath = router.pathname.startsWith('/admin/');
+
   return (
     <div className={styles.navBar}>
       <div onClick={() => router.push('/')}>Business Name</div>
-      <div className={styles.navBar__right}>
-        <TextField
-          placeholder="Search"
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            )
-          }}
-          className={styles.right__search}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={onKeyDown}
-        />
-        <CartButton />
-      </div>
+      {!isAdminPath && (
+        <div className={styles.navBar__right}>
+          <TextField
+            placeholder="Search"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              )
+            }}
+            className={styles.right__search}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={onKeyDown}
+          />
+          <CartButton />
+        </div>
+      )}
     </div>
   );
 };

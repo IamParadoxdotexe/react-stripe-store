@@ -14,7 +14,7 @@ export const CartButton: React.FC<CartButtonProps> = (props: CartButtonProps) =>
   const cart = useServiceState(CartService.cart);
 
   const onOpen = () => {
-    DrawerService.open(DrawerType.CART);
+    DrawerService.open(DrawerType.CART, {});
   };
 
   return props.type === 'normal' ? (

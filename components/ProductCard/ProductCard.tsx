@@ -15,6 +15,8 @@ import styles from './ProductCard.module.scss';
 type ProductCardProps = {
   product?: Product;
   variant?: 'vertical' | 'horizontal';
+  readOnly?: boolean;
+  onClick?: () => void;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps) => {
@@ -63,7 +65,10 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
   const loading = !props.product;
 
   return (
-    <div className={`${styles.product} ${styles[variant]}`}>
+    <div
+      className={`${styles.product} ${styles[variant]} ${props.onClick ? styles.clickable : ''}`}
+      onClick={props.onClick}
+    >
       <Skeleton className={styles.product__image} loading={loading}>
         {props.product && (
           <Image src={props.product.images[0]} alt={title} width={240} height={240} />
@@ -84,7 +89,9 @@ export const ProductCard: React.FC<ProductCardProps> = (props: ProductCardProps)
           <Skeleton loading={loading}>
             {props.product ? formatMoney(props.product.price.amount) : '$00.00'}
           </Skeleton>
-          {!loading && (cartItem?.quantity ? <QuantityToggle /> : <AddToCartButton />)}
+          {!loading &&
+            !props.readOnly &&
+            (cartItem?.quantity ? <QuantityToggle /> : <AddToCartButton />)}
         </div>
       </div>
     </div>

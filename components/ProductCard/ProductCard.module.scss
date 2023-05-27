@@ -19,6 +19,10 @@ $horizontal-image-size: 94px;
     }
   }
 
+  &.clickable {
+    cursor: pointer;
+  }
+
   .product__image {
     width: var(--image-size);
     min-width: var(--image-size);

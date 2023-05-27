@@ -1,14 +1,22 @@
 import * as XLSX from 'xlsx';
 import { Product } from '@/pages/api/stripe/products';
+import { arrayOf } from '@/utils/functions/arrayOf';
+import { generateKeys } from '@/utils/functions/generateKeys';
 import { isEqual } from '@/utils/functions/isEqual';
 import { useServiceState } from '@/utils/hooks/useServiceState';
+import { DrawerService, DrawerType } from '@/services/DrawerService';
 import { ProductService } from '@/services/ProductService';
 import { Button } from '@mui/material';
+import { ProductCard } from '@/components/ProductCard';
+import styles from './products.module.scss';
 
 const CELL_REGEX = /^([A-Z]+)([\d]+)$/;
 
 export default function Products() {
-  const products = useServiceState(ProductService.products);
+  const _products = useServiceState(ProductService.products);
+
+  const products = arrayOf(_products);
+  const loading = !products.length;
 
   const onImport = async (event: any) => {
     const file = event.target.files[0];
@@ -72,7 +80,7 @@ export default function Products() {
         }
 
         // check if product is new or has new values
-        if (!product.id || !isEqual(product, products[product.id], { omit: ['price.id'] })) {
+        if (!product.id || !isEqual(product, _products[product.id], { omit: ['price.id'] })) {
           console.log(`Updating product "${product.name}: ${product.description}"...`);
           ProductService.create(product);
         }
@@ -94,7 +102,33 @@ export default function Products() {
   };
 
   return (
-    <div>
+    <div className={styles.products}>
+      <div className={styles.products__header}>
+        <div className={styles.header__title}>All Products</div>
+        <div className={styles.header__subtitle}>{products?.length} available products</div>
+      </div>
+      <div className={styles.products__grid}>
+        {!loading &&
+          products.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              variant="horizontal"
+              readOnly
+              onClick={() => DrawerService.open(DrawerType.CREATE_PRODUCT, { product })}
+            />
+          ))}
+        {loading && generateKeys(20).map(i => <ProductCard key={i} variant="horizontal" />)}
+
+        {/* {products && !products.length && (
+          <Visual
+            visual={<NoResultsVisual />}
+            title="No results found!"
+            subtitle='Try searching for something less specific, like "cup".'
+          />
+        )} */}
+      </div>
+
       <input
         type="file"
         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

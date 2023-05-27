@@ -1,55 +1,21 @@
-$drawer-width: 600px;
-
-.drawer {
-  width: $drawer-width;
-  max-width: 100vw;
-  padding: 18px 24px;
+.drawer__items {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 12px;
+}
 
-  @media screen and (min-width: $drawer-width) {
-    padding: 36px 48px;
+.drawer__checkout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 
-    .drawer__header button {
-      display: none;
-    }
-  }
-
-  .drawer__header {
+  .checkout__total {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 18px;
+    align-items: center;
 
-    .header__title {
+    > :last-child {
       @include text-h3;
-    }
-
-    .header__subtitle {
-      @include text-h6;
-    }
-  }
-
-  .drawer__items {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .drawer__checkout {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .checkout__total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      > :last-child {
-        @include text-h3;
-      }
     }
   }
 }

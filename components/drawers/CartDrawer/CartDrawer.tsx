@@ -3,13 +3,12 @@ import { formatMoney } from '@/utils/functions/formatMoney';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { FetchResponse } from '@/utils/types/FetchResponse';
 import { CartService } from '@/services/CartService';
-import { DrawerService } from '@/services/DrawerService';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Alert, IconButton } from '@mui/material';
+import { Alert } from '@mui/material';
 import { ProductCard } from '@/components/ProductCard';
 import { Visual } from '@/components/Visual';
-import CancelIcon from '@/icons/Cancel.svg';
 import EmptyCartVisual from '@/visuals/EmptyCart.svg';
+import { BaseDrawer } from '../BaseDrawer';
 import styles from './CartDrawer.module.scss';
 
 export const CartDrawer: React.FC = () => {
@@ -26,19 +25,10 @@ export const CartDrawer: React.FC = () => {
   };
 
   return (
-    <div className={styles.drawer}>
-      <div className={styles.drawer__header}>
-        <div>
-          <div className={styles.header__title}>Your Cart</div>
-          <div className={styles.header__subtitle}>
-            Items in your bag are not reserved — check out now to make them yours.
-          </div>
-        </div>
-        <IconButton size="small" onClick={DrawerService.close}>
-          <CancelIcon />
-        </IconButton>
-      </div>
-
+    <BaseDrawer
+      title="Your Cart"
+      subtitle="Items in your bag are not reserved — check out now to make them yours."
+    >
       {cart.count > 0 && (
         <div className={styles.drawer__items}>
           {cart.items.map(cartItem => (
@@ -71,6 +61,6 @@ export const CartDrawer: React.FC = () => {
           )}
         </div>
       )}
-    </div>
+    </BaseDrawer>
   );
 };
