@@ -5,7 +5,11 @@ import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { Drawer, DrawerService, DrawerType } from '@/services/DrawerService';
 import { Button } from '@mui/material';
+import { ImageInputButton } from '@/components/ImageInputButton/ImageInputButton';
+import { ProductCardImage } from '@/components/ProductCard/ProductCardImage';
 import { TextInput } from '@/components/TextInput';
+import EditIcon from '@/icons/Edit.svg';
+import PlusIcon from '@/icons/Plus.svg';
 import { BaseDrawer } from '../BaseDrawer';
 import styles from './CreateProductDrawer.module.scss';
 
@@ -36,13 +40,22 @@ export const CreateProductDrawer: React.FC = () => {
 
   const drawer = useServiceState(DrawerService.drawer) as D;
 
+  const image = product.images[0];
+
   const valid = useMemo(() => {
-    const isNotNull = EDITABLED_KEYS.every(key => getNestedKey(product, key));
-    const isChanged = EDITABLED_KEYS.some(
-      key => getNestedKey(product, key) != getNestedKey(drawer?.props.product, key)
-    );
+    const isNotNull = EDITABLED_KEYS.every(key => getNestedKey(product, key)) && !!image;
+
+    const currentImage = drawer?.props.product?.images[0];
+    const isChanged =
+      EDITABLED_KEYS.some(
+        key => getNestedKey(product, key) != getNestedKey(drawer?.props.product, key)
+      ) || image != currentImage;
+
     return isNotNull && isChanged;
   }, [product]);
+
+  const setProductImage = (image?: string) =>
+    setProduct({ ...product, images: image ? [image] : [] });
 
   useEffect(() => {
     if (drawer?.props.product) {
@@ -56,6 +69,22 @@ export const CreateProductDrawer: React.FC = () => {
       subtitle="Product updates will not take effect until all changes have been published."
     >
       <div className={styles.drawer__inputs}>
+        <div className={styles.inputs__image}>
+          <div className={styles.image__label}>Image</div>
+          <div className={styles.image__uploads}>
+            {product.images.map((image, i) => (
+              <ProductCardImage key={i} src={image} size={180} />
+            ))}
+
+            <ImageInputButton
+              icon={image ? <EditIcon /> : <PlusIcon />}
+              label={image ? undefined : 'Add image'}
+              onChange={setProductImage}
+              className={image ? styles.uploads__edit : undefined}
+            />
+          </div>
+        </div>
+
         <TextInput
           label="Name"
           placeholder="ex. Stanley Cup"

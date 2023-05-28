@@ -1,0 +1,16 @@
+.button {
+  width: fit-content;
+  min-width: 0;
+
+  &.icon {
+    padding: 4px;
+
+    > span {
+      margin: 0;
+    }
+  }
+}
+
+.input {
+  display: none;
+}

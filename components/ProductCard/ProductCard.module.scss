@@ -21,6 +21,13 @@
       display: flex;
       flex-direction: column;
 
+      .info__title,
+      .info__subtitle {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
       .info__title {
         @include text-h4;
       }
