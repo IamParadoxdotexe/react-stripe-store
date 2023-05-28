@@ -47,7 +47,7 @@ export default async function handler(req: CreateProductRequest, res: NextApiRes
     metadata: req.body.metadata
   };
 
-  const unitAmount = req.body.price.amount * 100;
+  const unitAmount = Math.round(req.body.price.amount * 100);
 
   if (req.body.id) {
     const prices = await stripe.prices

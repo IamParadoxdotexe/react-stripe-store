@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { Product } from '@/pages/api/stripe/products';
 import { arrayOf } from '@/utils/functions/arrayOf';
@@ -5,18 +6,23 @@ import { generateKeys } from '@/utils/functions/generateKeys';
 import { isEqual } from '@/utils/functions/isEqual';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { DrawerService, DrawerType } from '@/services/DrawerService';
-import { ProductService } from '@/services/ProductService';
-import { Button } from '@mui/material';
+import { Products, ProductService } from '@/services/ProductService';
+import { LoadingButton } from '@mui/lab';
+import { Button, Divider } from '@mui/material';
 import { ProductCard } from '@/components/ProductCard';
 import styles from './products.module.scss';
 
 const CELL_REGEX = /^([A-Z]+)([\d]+)$/;
 
-export default function Products() {
+export default function AdminProducts() {
   const _products = useServiceState(ProductService.products);
+  const [_updatedProducts, setUpdatedProducts] = useState<Products>({});
 
-  const products = arrayOf(_products);
+  const products = arrayOf(_products).filter(product => !_updatedProducts[product.id]);
+  const updatedProducts = arrayOf(_updatedProducts);
   const loading = !products.length;
+
+  const [publishing, setPublishing] = useState(false);
 
   const onImport = async (event: any) => {
     const file = event.target.files[0];
@@ -88,37 +94,88 @@ export default function Products() {
     }
   };
 
-  const onImageUpload = async (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      const fileReader = new FileReader();
-
-      fileReader.addEventListener('load', () => {
-        //const image = event.target?.result;
-      });
-
-      fileReader.readAsDataURL(file);
-    }
+  const onProductClick = (product?: Product) => {
+    DrawerService.open(DrawerType.CREATE_PRODUCT, {
+      product,
+      onCreate: newProduct => {
+        setUpdatedProducts({ ..._updatedProducts, [newProduct.id]: newProduct });
+      }
+    });
   };
+
+  const onClear = () => {
+    setUpdatedProducts({});
+  };
+
+  const onPublish = async () => {
+    setPublishing(true);
+    for (const product of updatedProducts) {
+      await ProductService.create(product);
+
+      delete _updatedProducts[product.id];
+      setUpdatedProducts(_updatedProducts);
+    }
+    setPublishing(false);
+  };
+
+  const renderProducts = (products: Product[], skeletons: number) => (
+    <>
+      {!loading &&
+        products.map(product => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            variant="horizontal"
+            readOnly
+            onClick={() => onProductClick(product)}
+          />
+        ))}
+      {loading && generateKeys(skeletons).map(i => <ProductCard key={i} variant="horizontal" />)}
+    </>
+  );
 
   return (
     <div className={styles.products}>
       <div className={styles.products__header}>
-        <div className={styles.header__title}>All Products</div>
-        <div className={styles.header__subtitle}>{products?.length} available products</div>
+        <div>
+          <div className={styles.header__title}>All Products</div>
+          <div className={styles.header__subtitle}>
+            {products.length} available products{' '}
+            {!!updatedProducts.length && <span>({updatedProducts.length} updated/added)</span>}
+          </div>
+        </div>
+
+        <div className={styles.header__actions}>
+          <Button
+            variant="outlined"
+            onClick={onClear}
+            disabled={!updatedProducts.length || publishing}
+          >
+            Clear
+          </Button>
+          <LoadingButton
+            variant="contained"
+            onClick={onPublish}
+            disabled={!updatedProducts.length}
+            loading={publishing}
+          >
+            Publish changes
+          </LoadingButton>
+        </div>
       </div>
       <div className={styles.products__grid}>
-        {!loading &&
-          products.map(product => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              variant="horizontal"
-              readOnly
-              onClick={() => DrawerService.open(DrawerType.CREATE_PRODUCT, { product })}
-            />
-          ))}
-        {loading && generateKeys(20).map(i => <ProductCard key={i} variant="horizontal" />)}
+        <Button
+          variant="outlined"
+          style={{ width: 346, height: 90 }}
+          onClick={() => onProductClick()}
+        >
+          Add product
+        </Button>
+        {renderProducts(updatedProducts, 2)}
+      </div>
+      <Divider />
+      <div className={styles.products__grid}>
+        {renderProducts(products, 20)}
 
         {/* {products && !products.length && (
           <Visual
@@ -138,8 +195,6 @@ export default function Products() {
       <Button color="primary" onClick={() => ProductService.export()}>
         Copy products data
       </Button>
-
-      <input type="file" accept="image/png" onInput={onImageUpload} />
     </div>
   );
 }

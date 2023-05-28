@@ -27,8 +27,16 @@ const DEFAULT_PRODUCT: Product = {
   metadata: {}
 };
 
+const CREATE_TITLE = 'Add Product';
+const UPDATE_TITLE = 'Update Product';
+
+const CREATE_SUBTITLE = 'New products will not be added until all changes have been published.';
+const UPDATE_SUBTITLE =
+  'Product updates will not take effect until all changes have been published.';
+
 export type CreateProductDrawerProps = {
   product?: Product;
+  onCreate?: (product: Product) => void;
 };
 
 type D = Drawer<DrawerType.CREATE_PRODUCT> | undefined;
@@ -36,11 +44,12 @@ type D = Drawer<DrawerType.CREATE_PRODUCT> | undefined;
 const EDITABLED_KEYS = ['name', 'description', 'price.amount'];
 
 export const CreateProductDrawer: React.FC = () => {
-  const [product, setProduct] = useState<Product>(DEFAULT_PRODUCT);
-
-  const drawer = useServiceState(DrawerService.drawer) as D;
+  const [product, setProduct] = useState<Product>(_.cloneDeep(DEFAULT_PRODUCT));
 
   const image = product.images[0];
+
+  const drawer = useServiceState(DrawerService.drawer) as D;
+  const isCreating = !drawer?.props.product;
 
   const valid = useMemo(() => {
     const isNotNull = EDITABLED_KEYS.every(key => getNestedKey(product, key)) && !!image;
@@ -57,6 +66,11 @@ export const CreateProductDrawer: React.FC = () => {
   const setProductImage = (image?: string) =>
     setProduct({ ...product, images: image ? [image] : [] });
 
+  const onCreate = () => {
+    drawer?.props.onCreate?.(product);
+    DrawerService.close();
+  };
+
   useEffect(() => {
     if (drawer?.props.product) {
       setProduct(_.cloneDeep(drawer.props.product));
@@ -65,8 +79,8 @@ export const CreateProductDrawer: React.FC = () => {
 
   return (
     <BaseDrawer
-      title="Update Product"
-      subtitle="Product updates will not take effect until all changes have been published."
+      title={isCreating ? CREATE_TITLE : UPDATE_TITLE}
+      subtitle={isCreating ? CREATE_SUBTITLE : UPDATE_SUBTITLE}
     >
       <div className={styles.drawer__inputs}>
         <div className={styles.inputs__image}>
@@ -112,8 +126,8 @@ export const CreateProductDrawer: React.FC = () => {
         />
       </div>
 
-      <Button variant="contained" disabled={!valid}>
-        Update
+      <Button variant="contained" disabled={!valid} onClick={onCreate}>
+        {isCreating ? 'Add' : 'Update'}
       </Button>
     </BaseDrawer>
   );

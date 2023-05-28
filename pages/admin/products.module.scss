@@ -5,12 +5,25 @@
   gap: 24px;
 
   .products__header {
+    display: flex;
+    justify-content: space-between;
+
     .header__title {
       @include text-h3;
     }
 
     .header__subtitle {
       @include text-h6;
+
+      > span {
+        color: color-primary(5);
+      }
+    }
+
+    .header__actions {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
     }
   }
 
