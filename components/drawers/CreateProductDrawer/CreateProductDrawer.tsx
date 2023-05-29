@@ -4,7 +4,8 @@ import { Product } from '@/pages/api/stripe/products';
 import { getNestedKey } from '@/utils/functions/getNestedKey';
 import { useServiceState } from '@/utils/hooks/useServiceState';
 import { Drawer, DrawerService, DrawerType } from '@/services/DrawerService';
-import { Button } from '@mui/material';
+import { ProductService } from '@/services/ProductService';
+import { LoadingButton } from '@mui/lab';
 import { ImageInputButton } from '@/components/ImageInputButton/ImageInputButton';
 import { ProductCardImage } from '@/components/ProductCard/ProductCardImage';
 import { TextInput } from '@/components/TextInput';
@@ -45,6 +46,7 @@ const EDITABLED_KEYS = ['name', 'description', 'price.amount'];
 
 export const CreateProductDrawer: React.FC = () => {
   const [product, setProduct] = useState<Product>(_.cloneDeep(DEFAULT_PRODUCT));
+  const [loading, setLoading] = useState(false);
 
   const image = product.images[0];
 
@@ -66,8 +68,9 @@ export const CreateProductDrawer: React.FC = () => {
   const setProductImage = (image?: string) =>
     setProduct({ ...product, images: image ? [image] : [] });
 
-  const onCreate = () => {
-    drawer?.props.onCreate?.(product);
+  const onCreate = async () => {
+    setLoading(true);
+    await ProductService.create(product);
     DrawerService.close();
   };
 
@@ -95,6 +98,7 @@ export const CreateProductDrawer: React.FC = () => {
               label={image ? undefined : 'Add image'}
               onChange={setProductImage}
               className={image ? styles.uploads__edit : undefined}
+              disabled={loading}
             />
           </div>
         </div>
@@ -105,6 +109,7 @@ export const CreateProductDrawer: React.FC = () => {
           value={product.name}
           onChange={name => setProduct({ ...product, name })}
           required
+          disabled={loading}
         />
         <TextInput
           label="Description"
@@ -112,6 +117,7 @@ export const CreateProductDrawer: React.FC = () => {
           value={product.description}
           onChange={description => setProduct({ ...product, description })}
           required
+          disabled={loading}
         />
         <TextInput
           label="Price"
@@ -123,12 +129,13 @@ export const CreateProductDrawer: React.FC = () => {
             setProduct({ ...product });
           }}
           validator={value => PRICE_REGEX.test(value)}
+          disabled={loading}
         />
       </div>
 
-      <Button variant="contained" disabled={!valid} onClick={onCreate}>
+      <LoadingButton variant="contained" disabled={!valid} onClick={onCreate} loading={loading}>
         {isCreating ? 'Add' : 'Update'}
-      </Button>
+      </LoadingButton>
     </BaseDrawer>
   );
 };

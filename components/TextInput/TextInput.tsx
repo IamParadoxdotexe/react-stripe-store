@@ -43,7 +43,11 @@ export const TextInput: React.FC<TextInputProps> = (props: TextInputProps) => {
   const isError = !valid && hasChanged;
 
   return (
-    <div className={`${styles.input} ${isError ? styles.error : ''}`}>
+    <div
+      className={`${styles.input} ${isError ? styles.error : ''} ${
+        props.disabled ? styles.disabled : ''
+      }`}
+    >
       {props.label && <label>{props.label}</label>}
       <TextField
         size="small"

@@ -11,7 +11,7 @@ export type Products = {
 };
 
 export const ProductService = new (class {
-  public products = new BehaviorSubject<Products>({});
+  public products = new BehaviorSubject<Products | undefined>(undefined);
 
   public load() {
     fetch(getUrl('/api/stripe/products'))
@@ -80,7 +80,7 @@ export const ProductService = new (class {
   }
 
   public onProductDeleted(productId: string) {
-    delete this.products.value[productId];
+    delete this.products.value?.[productId];
     this.products.next({ ...this.products.value });
   }
 })();

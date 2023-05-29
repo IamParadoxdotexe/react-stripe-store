@@ -7,6 +7,7 @@ type ImageInputButtonPros = {
   label?: string;
   onChange?: (image?: string) => void;
   className?: string;
+  disabled?: boolean;
 };
 
 export const ImageInputButton: React.FC<ImageInputButtonPros> = (props: ImageInputButtonPros) => {
@@ -31,6 +32,7 @@ export const ImageInputButton: React.FC<ImageInputButtonPros> = (props: ImageInp
         onClick={() => ref?.click()}
         startIcon={props.icon}
         className={`${styles.button} ${!props.label ? styles.icon : ''}`}
+        disabled={props.disabled}
       >
         {props.label}
       </Button>

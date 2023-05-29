@@ -22,6 +22,7 @@ First, create a `.env.local` file at the root with the following environmental v
 STRIPE_SECRET_KEY=<your key here>
 NEXT_PUBLIC_PUSHER_APP_KEY=<your key here>
 NEXT_PUBLIC_PUSHER_APP_SECRET=<your secret here>
+NEXT_PUBLIC_ENV=DEV
 ```
 
 The `STRIPE_SECRET_KEY` will be used to push/pull your product data and forward users to the Stripe-hosted transaction portal.
@@ -73,5 +74,5 @@ Using [Vercel](https://vercel.com/), you can deploy your website immediately wit
 
 1. Add a new project pointing at your forked repository
 2. Add your environmental variables for `Stripe` and `Pusher`
-3. Add the environmental variable `NEXT_PUBLIC_ENV=PROD`
+3. Update the environmental variable `NEXT_PUBLIC_ENV=PROD`
 4. Deploy and view your website!

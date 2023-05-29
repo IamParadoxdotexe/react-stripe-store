@@ -17,7 +17,12 @@ const pusherHandlers: { [key in PusherEvent]: (data: any) => void } = {
 export const PusherService = new (class {
   public bind() {
     for (const event of Object.keys(PusherEvent)) {
-      mainChannel.bind(event, pusherHandlers[event as PusherEvent]);
+      mainChannel.bind(event, (value: any) => {
+        if (process.env.NEXT_PUBLIC_ENV === 'DEV') {
+          console.log(event, value);
+        }
+        pusherHandlers[event as PusherEvent](value);
+      });
     }
   }
 
