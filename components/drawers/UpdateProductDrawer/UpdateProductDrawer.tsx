@@ -12,7 +12,7 @@ import { TextInput } from '@/components/TextInput';
 import EditIcon from '@/icons/Edit.svg';
 import PlusIcon from '@/icons/Plus.svg';
 import { BaseDrawer } from '../BaseDrawer';
-import styles from './CreateProductDrawer.module.scss';
+import styles from './UpdateProductDrawer.module.scss';
 
 const PRICE_REGEX = /^[\d]+\.[\d]{2}$/;
 
@@ -28,30 +28,28 @@ const DEFAULT_PRODUCT: Product = {
   metadata: {}
 };
 
-const CREATE_TITLE = 'Add Product';
-const UPDATE_TITLE = 'Update Product';
+const NEW_PRODUCT_TITLE = 'Add Product';
+const EXISTING_PRODUCT_TITLE = 'Update Product';
 
-const CREATE_SUBTITLE = 'New products will not be added until all changes have been published.';
-const UPDATE_SUBTITLE =
-  'Product updates will not take effect until all changes have been published.';
+const NEW_PRODUCT_SUBTITLE = 'Post a new product for customers to purchase.';
+const EXISTING_PRODUCT_SUBTITLE = 'Edit the properties of an existing product.';
 
-export type CreateProductDrawerProps = {
+export type UpdateProductDrawerProps = {
   product?: Product;
-  onCreate?: (product: Product) => void;
 };
 
-type D = Drawer<DrawerType.CREATE_PRODUCT> | undefined;
+type D = Drawer<DrawerType.UPDATE_PRODUCT> | undefined;
 
 const EDITABLED_KEYS = ['name', 'description', 'price.amount'];
 
-export const CreateProductDrawer: React.FC = () => {
+export const UpdateProductDrawer: React.FC = () => {
   const [product, setProduct] = useState<Product>(_.cloneDeep(DEFAULT_PRODUCT));
   const [loading, setLoading] = useState(false);
 
   const image = product.images[0];
 
   const drawer = useServiceState(DrawerService.drawer) as D;
-  const isCreating = !drawer?.props.product;
+  const isNew = !drawer?.props.product;
 
   const valid = useMemo(() => {
     const isNotNull = EDITABLED_KEYS.every(key => getNestedKey(product, key)) && !!image;
@@ -68,9 +66,9 @@ export const CreateProductDrawer: React.FC = () => {
   const setProductImage = (image?: string) =>
     setProduct({ ...product, images: image ? [image] : [] });
 
-  const onCreate = async () => {
+  const onUpdate = async () => {
     setLoading(true);
-    await ProductService.create(product);
+    await ProductService.update(product);
     DrawerService.close();
   };
 
@@ -82,8 +80,8 @@ export const CreateProductDrawer: React.FC = () => {
 
   return (
     <BaseDrawer
-      title={isCreating ? CREATE_TITLE : UPDATE_TITLE}
-      subtitle={isCreating ? CREATE_SUBTITLE : UPDATE_SUBTITLE}
+      title={isNew ? NEW_PRODUCT_TITLE : EXISTING_PRODUCT_TITLE}
+      subtitle={isNew ? NEW_PRODUCT_SUBTITLE : EXISTING_PRODUCT_SUBTITLE}
     >
       <div className={styles.drawer__inputs}>
         <div className={styles.inputs__image}>
@@ -133,8 +131,8 @@ export const CreateProductDrawer: React.FC = () => {
         />
       </div>
 
-      <LoadingButton variant="contained" disabled={!valid} onClick={onCreate} loading={loading}>
-        {isCreating ? 'Add' : 'Update'}
+      <LoadingButton variant="contained" disabled={!valid} onClick={onUpdate} loading={loading}>
+        {isNew ? 'Add' : 'Update'}
       </LoadingButton>
     </BaseDrawer>
   );

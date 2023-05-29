@@ -84,14 +84,14 @@ export default function AdminProducts() {
   //       // check if product is new or has new values
   //       if (!product.id || !isEqual(product, _products?.[product.id], { omit: ['price.id'] })) {
   //         console.log(`Updating product "${product.name}: ${product.description}"...`);
-  //         ProductService.create(product);
+  //         ProductService.update(product);
   //       }
   //     }
   //   }
   // };
 
   const onProductClick = (product?: Product) => {
-    DrawerService.open(DrawerType.CREATE_PRODUCT, {
+    DrawerService.open(DrawerType.UPDATE_PRODUCT, {
       product
     });
   };

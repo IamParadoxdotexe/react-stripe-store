@@ -1,14 +1,14 @@
 import { BehaviorSubject } from 'rxjs';
-import { CreateProductDrawerProps } from '@/components/drawers/CreateProductDrawer';
+import { UpdateProductDrawerProps } from '@/components/drawers/UpdateProductDrawer';
 
 export enum DrawerType {
   CART = 'CART',
-  CREATE_PRODUCT = 'CREATE_PRODUCT'
+  UPDATE_PRODUCT = 'UPDATE_PRODUCT'
 }
 
 interface DrawerTypeProps {
   CART: {};
-  CREATE_PRODUCT: CreateProductDrawerProps;
+  UPDATE_PRODUCT: UpdateProductDrawerProps;
 }
 
 export type Drawer<T extends DrawerType> = {

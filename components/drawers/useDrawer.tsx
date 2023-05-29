@@ -3,11 +3,11 @@ import { useServiceState } from '@/utils/hooks/useServiceState';
 import { DrawerService, DrawerType } from '@/services/DrawerService';
 import { Drawer as MuiDrawer } from '@mui/material';
 import { CartDrawer } from './CartDrawer';
-import { CreateProductDrawer } from './CreateProductDrawer';
+import { UpdateProductDrawer } from './UpdateProductDrawer';
 
 const DRAWER_CONTENTS: { [key in DrawerType]: ReactNode } = {
   CART: <CartDrawer />,
-  CREATE_PRODUCT: <CreateProductDrawer />
+  UPDATE_PRODUCT: <UpdateProductDrawer />
 };
 
 export const useDrawer = () => {

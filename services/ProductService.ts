@@ -30,8 +30,8 @@ export const ProductService = new (class {
     return results.map(result => result.item);
   }
 
-  public async create(product: Product) {
-    await fetch(getUrl('/api/stripe/products/create'), {
+  public async update(product: Product) {
+    await fetch(getUrl('/api/stripe/products/update'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -6,11 +6,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2022-11-15'
 });
 
-interface CreateProductRequest extends NextApiRequest {
+interface UpdateProductRequest extends NextApiRequest {
   body: Product;
 }
 
-export default async function handler(req: CreateProductRequest, res: NextApiResponse) {
+/**
+ * Update existing or create new product.
+ */
+export default async function handler(req: UpdateProductRequest, res: NextApiResponse) {
   if (!req.body) {
     return res.status(400).json({ detail: 'No product data provided.' });
   }
