@@ -25,7 +25,8 @@ const DEFAULT_PRODUCT: Product = {
     amount: 0
   },
   images: [],
-  metadata: {}
+  metadata: {},
+  active: true
 };
 
 const NEW_PRODUCT_TITLE = 'Add Product';
@@ -44,7 +45,10 @@ const EDITABLED_KEYS = ['name', 'description', 'price.amount'];
 
 export const UpdateProductDrawer: React.FC = () => {
   const [product, setProduct] = useState<Product>(_.cloneDeep(DEFAULT_PRODUCT));
-  const [loading, setLoading] = useState(false);
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const isLoading = isUpdating || isDeleting;
 
   const image = product.images[0];
 
@@ -67,8 +71,14 @@ export const UpdateProductDrawer: React.FC = () => {
     setProduct({ ...product, images: image ? [image] : [] });
 
   const onUpdate = async () => {
-    setLoading(true);
+    setIsUpdating(true);
     await ProductService.update(product);
+    DrawerService.close();
+  };
+
+  const onDelete = async () => {
+    setIsDeleting(true);
+    await ProductService.delete(product);
     DrawerService.close();
   };
 
@@ -96,7 +106,7 @@ export const UpdateProductDrawer: React.FC = () => {
               label={image ? undefined : 'Add image'}
               onChange={setProductImage}
               className={image ? styles.uploads__edit : undefined}
-              disabled={loading}
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -107,7 +117,7 @@ export const UpdateProductDrawer: React.FC = () => {
           value={product.name}
           onChange={name => setProduct({ ...product, name })}
           required
-          disabled={loading}
+          disabled={isLoading}
         />
         <TextInput
           label="Description"
@@ -115,7 +125,7 @@ export const UpdateProductDrawer: React.FC = () => {
           value={product.description}
           onChange={description => setProduct({ ...product, description })}
           required
-          disabled={loading}
+          disabled={isLoading}
         />
         <TextInput
           label="Price"
@@ -126,14 +136,33 @@ export const UpdateProductDrawer: React.FC = () => {
             product.price.amount = parseFloat(value) || 0;
             setProduct({ ...product });
           }}
-          validator={value => PRICE_REGEX.test(value)}
-          disabled={loading}
+          validator={value => PRICE_REGEX.test(value) && parseFloat(value) > 0}
+          disabled={isLoading}
         />
       </div>
 
-      <LoadingButton variant="contained" disabled={!valid} onClick={onUpdate} loading={loading}>
-        {isNew ? 'Add' : 'Update'}
-      </LoadingButton>
+      <div className={styles.drawer__actions}>
+        <LoadingButton
+          variant="contained"
+          disabled={!valid || isLoading}
+          onClick={onUpdate}
+          loading={isUpdating}
+        >
+          {isNew ? 'Add' : 'Update'}
+        </LoadingButton>
+
+        {!isNew && (
+          <LoadingButton
+            variant="outlined"
+            disabled={isLoading}
+            color="error"
+            onClick={onDelete}
+            loading={isDeleting}
+          >
+            Delete
+          </LoadingButton>
+        )}
+      </div>
     </BaseDrawer>
   );
 };

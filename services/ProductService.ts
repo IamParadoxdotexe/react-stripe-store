@@ -1,5 +1,6 @@
 import clipboardCopy from 'clipboard-copy';
 import Fuse from 'fuse.js';
+import _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '@/pages/api/stripe/products';
 import { arrayOf } from '@/utils/functions/arrayOf';
@@ -11,13 +12,22 @@ export type Products = {
 };
 
 export const ProductService = new (class {
+  public allProducts = new BehaviorSubject<Products | undefined>(undefined);
+
+  // active products
   public products = new BehaviorSubject<Products | undefined>(undefined);
+
+  constructor() {
+    this.allProducts.subscribe(products =>
+      this.products.next(_.pickBy(products, product => product.active))
+    );
+  }
 
   public load() {
     fetch(getUrl('/api/stripe/products'))
       .then(res => res.json())
       .then((products: Product[]) => {
-        this.products.next(dictOf(products, 'id'));
+        this.allProducts.next(dictOf(products, 'id'));
       });
   }
 
@@ -37,6 +47,15 @@ export const ProductService = new (class {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(product)
+    });
+  }
+
+  public async delete(product: Product) {
+    await fetch(getUrl(`/api/stripe/products/delete?id=${product.id}`), {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   }
 
@@ -73,14 +92,14 @@ export const ProductService = new (class {
   }
 
   public onProductUpdated(product: Product) {
-    this.products.next({
-      ...this.products.value,
+    this.allProducts.next({
+      ...this.allProducts.value,
       [product.id]: product
     });
   }
 
   public onProductDeleted(productId: string) {
-    delete this.products.value?.[productId];
-    this.products.next({ ...this.products.value });
+    delete this.allProducts.value?.[productId];
+    this.allProducts.next({ ...this.allProducts.value });
   }
 })();
