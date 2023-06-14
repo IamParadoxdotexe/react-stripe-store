@@ -7,7 +7,7 @@ import styles from './sign-in.module.scss';
 
 const styleExports = getStyleExports();
 
-export default function Home() {
+export default function SignInPage() {
   const router = useRouter();
   const { userId } = useAuth();
 

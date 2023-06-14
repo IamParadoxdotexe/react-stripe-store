@@ -6,16 +6,6 @@
   flex-direction: column;
   gap: 12px;
 
-  &.dragging {
-    .carousel__items {
-      transition: none;
-    }
-
-    .carousel__indicator .indicator__slider {
-      transition: none;
-    }
-  }
-
   .carousel__header {
     display: flex;
     align-items: center;
@@ -30,8 +20,12 @@
   .carousel__items {
     display: flex;
     gap: 48px;
-    transition: margin-left 450ms ease;
-    width: fit-content;
+    overflow-x: auto;
+    width: 100%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   .carousel__indicator {
@@ -43,7 +37,6 @@
     .indicator__slider {
       height: 100%;
       background-color: color-dark(4);
-      transition: margin-left 450ms ease;
       border-radius: 3px;
     }
   }

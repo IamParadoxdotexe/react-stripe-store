@@ -1,12 +1,4 @@
-import React, {
-  ReactNode,
-  useState,
-  TouchEvent as ReactTouchEvent,
-  useRef,
-  useCallback
-} from 'react';
-import { Subscription } from 'rxjs';
-import { easeSpeed } from '@/utils/functions/easeSpeed';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { useIsomorphicLayoutEffect } from '@/utils/hooks/useIsomorphicLayoutEffect';
 import { IconButton } from '@mui/material';
 import { Skeleton } from '@/components/Skeleton';
@@ -22,33 +14,16 @@ type CarouselProps = {
 
 const INDICATOR_WIDTH = 150;
 
-const POLLING_SIZE = 3;
-const POLLING_RATE_MS = 10;
-
 export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const [offset, setOffset] = useState(0);
-  const [carouselRef, setCarouselRef] = useState<HTMLDivElement | null>();
-  const [carouselItemsWidth, setCarouselItemsWidth] = useState(0);
-  const [carouselWidth, setCarouselWidth] = useState(0);
+  const [goalOffset, setGoalOffset] = useState(0);
   const [maxOffset, setMaxOffset] = useState(0);
 
-  // when isDragging = true, carousel can move
-  const [isDragging, setIsDragging] = useState<boolean>();
-  // startDragXY is used to different drag from vertical scroll
-  const [startDragXY, setStartDragXY] = useState<[number, number]>([0, 0]);
+  const [carouselRef, setCarouselRef] = useState<HTMLDivElement | null>();
+  const [carouselItemsRef, setCarouselItemsRef] = useState<HTMLDivElement | null>();
 
-  // polling lastDragX is used to compute speed for drag end animation
-  const [lastDragX, setLastDragX] = useState({
-    value: 0
-  });
-  const [polledLastDragX, setPolledLastDragX] = useState<number[]>([]);
-  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timer>();
-
-  const [dragEndAnimation, setDragEndAnimation] = useState<Subscription>();
-
-  const ref = useRef<HTMLDivElement>(null);
-
-  const updateOffset = (offset: number) => setOffset(Math.max(0, Math.min(offset, maxOffset)));
+  const [carouselWidth, setCarouselWidth] = useState(0);
+  const [carouselItemsWidth, setCarouselItemsWidth] = useState(0);
 
   const CarouselControl = (_props: { direction: 'left' | 'right' }) => {
     const isLeft = _props.direction === 'left';
@@ -58,7 +33,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
       <IconButton
         color="primary"
         disabled={isLeft ? offset === 0 : offset === maxOffset}
-        onClick={() => updateOffset(nextOffset)}
+        onClick={() => setGoalOffset(Math.max(0, Math.min(nextOffset, maxOffset)))}
       >
         {isLeft ? <LeftArrowIcon /> : <RightArrowIcon />}
       </IconButton>
@@ -67,18 +42,18 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
 
   // calculate the maximum offset based on carousel width and carousel items width
   const onResize = () => {
-    if (carouselRef) {
-      const carouselWidth = carouselRef?.clientWidth;
-      const carouselItemsWidth = (carouselRef?.childNodes[1] as HTMLElement).scrollWidth;
+    if (carouselRef && carouselItemsRef) {
+      const carouselWidth = carouselRef.clientWidth;
+      const carouselItemsWidth = carouselItemsRef.scrollWidth;
       const newMaxOffset = Math.max(carouselItemsWidth - carouselWidth, 0);
 
-      setCarouselItemsWidth(carouselItemsWidth);
       setCarouselWidth(carouselWidth);
+      setCarouselItemsWidth(carouselItemsWidth);
       setMaxOffset(maxOffset => {
         const maxOffsetChange = maxOffset - newMaxOffset;
 
         if (maxOffsetChange > 0) {
-          setOffset(0); // reset offset to 0 to avoid any oddities when maxOffset is increased
+          setGoalOffset(0); // reset offset to 0 to avoid any oddities when maxOffset is increased
         }
 
         return newMaxOffset;
@@ -86,83 +61,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     }
   };
 
-  const onDragStart = (event: ReactTouchEvent) => {
-    if (dragEndAnimation) {
-      dragEndAnimation.unsubscribe();
-      setIsDragging(undefined);
-      setPolledLastDragX([]);
-    }
-
-    const dragXY = getDragXY(event);
-    setStartDragXY(dragXY);
-    setLastDragX({ value: dragXY[0] });
-  };
-
-  const onDrag = useCallback(
-    (event: TouchEvent) => {
-      if (isDragging === false) {
-        return;
-      } else if (isDragging === true && !event.cancelable) {
-        // if event becomes not cancelable while dragging, abort
-        setIsDragging(false);
-      }
-
-      const dragXY = getDragXY(event);
-
-      if (isDragging === undefined) {
-        const totalDragChangeX = Math.abs(startDragXY[0] - dragXY[0]);
-        const totalDragChangeY = Math.abs(startDragXY[1] - dragXY[1]);
-
-        // check for vertical scroll
-        const isVerticallyScrolling = totalDragChangeY > totalDragChangeX;
-
-        setIsDragging(!isVerticallyScrolling);
-
-        if (isVerticallyScrolling) {
-          return;
-        }
-      }
-
-      // prevent vertical scroll while dragging
-      event.preventDefault();
-
-      const dragChange = lastDragX.value - dragXY[0];
-
-      // drag carousel
-      updateOffset(offset + dragChange);
-      setLastDragX({ value: dragXY[0] });
-    },
-    [offset, lastDragX, isDragging]
-  );
-
-  const onDragEnd = () => {
-    // skip animation in the vertical scroll case
-    if (!isDragging || !polledLastDragX.length) {
-      setIsDragging(undefined);
-      return;
-    }
-
-    const totalDragXChange = polledLastDragX.at(-1)! - polledLastDragX[0];
-    const speed = totalDragXChange / polledLastDragX.length;
-
-    const dragEndAnimation = easeSpeed(offset, speed, 60, 8).subscribe(easingOffset => {
-      if (easingOffset != undefined) {
-        updateOffset(easingOffset);
-      } else {
-        dragEndAnimation.unsubscribe();
-        setIsDragging(undefined);
-        setPolledLastDragX([]);
-      }
-    });
-
-    setDragEndAnimation(dragEndAnimation);
-  };
-
-  const getDragXY = (event: TouchEvent | ReactTouchEvent): [number, number] => {
-    const touch = event.changedTouches[0];
-    return [touch.clientX, touch.clientY];
-  };
-
+  // listen to window resize
   useIsomorphicLayoutEffect(() => {
     onResize();
     window.addEventListener('resize', onResize);
@@ -170,40 +69,32 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     return () => window.removeEventListener('resize', onResize);
   }, [carouselRef, props.children]);
 
-  useIsomorphicLayoutEffect(() => {
-    // manually bind onTouchMove to support preventDefault
-    if (ref.current) {
-      ref.current.ontouchmove = event => onDrag(event);
-    }
-  }, [ref, onDrag]);
+  // detect carouselItems scroll
+  useEffect(() => {
+    const onScroll = (event: any) => {
+      setOffset(event.target.scrollLeft);
+    };
 
-  useIsomorphicLayoutEffect(() => {
-    if (isDragging) {
-      // poll last X position to calculate speed
-      setPollingInterval(
-        setInterval(() => {
-          setLastDragX(lastDragX => {
-            setPolledLastDragX(polledLastDragX =>
-              [lastDragX.value, ...polledLastDragX].slice(0, POLLING_SIZE)
-            );
-
-            // don't actually update lastDragX, we just wanted up-to-date value
-            return lastDragX;
-          });
-        }, POLLING_RATE_MS)
-      );
-    } else if (pollingInterval) {
-      clearInterval(pollingInterval);
-      setPollingInterval(undefined);
+    if (carouselItemsRef) {
+      carouselItemsRef.addEventListener('scroll', onScroll);
     }
-  }, [isDragging]);
+
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [carouselItemsRef]);
+
+  // scroll items to goalOffset
+  useEffect(() => {
+    if (carouselItemsRef?.scrollLeft != goalOffset) {
+      carouselItemsRef?.scrollTo({ left: goalOffset, behavior: 'smooth' });
+    }
+  }, [goalOffset]);
 
   const sliderWidth =
     carouselWidth && carouselItemsWidth && (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
   const sliderOffset = carouselWidth && offset && (offset / carouselItemsWidth) * INDICATOR_WIDTH;
 
   return (
-    <div ref={setCarouselRef} className={`${styles.carousel} ${isDragging ? styles.dragging : ''}`}>
+    <div ref={setCarouselRef} className={styles.carousel}>
       <div className={styles.carousel__header}>
         <Skeleton className={styles.header__title} loading={props.loading}>
           {props.title}
@@ -216,14 +107,7 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
         )}
       </div>
 
-      <div
-        ref={ref}
-        className={styles.carousel__items}
-        style={{ marginLeft: -offset }}
-        onTouchStart={onDragStart}
-        onTouchEnd={onDragEnd}
-        onTouchCancel={onDragEnd}
-      >
+      <div ref={setCarouselItemsRef} className={styles.carousel__items}>
         {props.children}
       </div>
 
