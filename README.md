@@ -5,12 +5,10 @@ This is a boilerplate e-commerce website that can be used to sell products via t
 This website employs the following technologies:
 
 - [React](https://react.dev/)
-- [Next.js](https://nextjs.org/)
-  - `Next.js` provides a framework for client-side rendering and serverless API endpoints.
-- [Pusher](https://pusher.com/)
-  - `Pusher` provides a persistent server for live WebSocket connections.
-- [Stripe](https://stripe.com/)
-  - `Stripe` provides an externally-hosted transaction portal and inventory database.
+- [Next.js](https://nextjs.org/) - provides a framework for client-side rendering and serverless API endpoints
+- [Pusher](https://pusher.com/) - provides a persistent server for live WebSocket connections
+- [Stripe](https://stripe.com/) - provides an externally-hosted transaction portal and inventory database
+- [Clerk](https://clerk.com/) - provides an authentication portal and user database for admin access
 
 ## Getting Started
 
@@ -20,12 +18,16 @@ First, create a `.env.local` file at the root with the following environmental v
 
 ```
 STRIPE_SECRET_KEY=<your key here>
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=<your key here>
+CLERK_SECRET_KEY=<your key here>
 NEXT_PUBLIC_PUSHER_APP_KEY=<your key here>
 NEXT_PUBLIC_PUSHER_APP_SECRET=<your secret here>
 NEXT_PUBLIC_ENV=DEV
 ```
 
 The `STRIPE_SECRET_KEY` will be used to push/pull your product data and forward users to the Stripe-hosted transaction portal.
+
+The `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` will be used to authenticate admin access via the Clerk-hosted authentication portal.
 
 The `NEXT_PUBLIC_PUSHER_APP_KEY` and `NEXT_PUBLIC_PUSHER_APP_SECRET` will be used to facilitate live data updates between Stripe and your website.
 

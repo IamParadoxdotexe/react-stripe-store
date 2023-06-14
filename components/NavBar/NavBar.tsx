@@ -1,3 +1,4 @@
+import { UserButton } from '@clerk/nextjs';
 import { useRouter } from 'next/router';
 import React, { KeyboardEvent, useState } from 'react';
 import { CartButton } from '@/components/CartButton';
@@ -15,12 +16,15 @@ export const NavBar: React.FC = () => {
     }
   };
 
-  const isAdminPath = router.pathname.startsWith('/admin/');
+  const isAdminPath = router.pathname.startsWith('/admin');
+  const isSignInPath = router.pathname.startsWith('/sign-in');
+
+  const hideSearch = isAdminPath || isSignInPath;
 
   return (
     <div className={styles.navBar}>
       <div onClick={() => router.push('/')}>Business Name</div>
-      {!isAdminPath && (
+      {!hideSearch && (
         <div className={styles.navBar__right}>
           <TextInput
             placeholder="Search"
@@ -32,6 +36,7 @@ export const NavBar: React.FC = () => {
           <CartButton />
         </div>
       )}
+      {isAdminPath && <UserButton />}
     </div>
   );
 };

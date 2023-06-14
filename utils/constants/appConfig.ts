@@ -19,6 +19,7 @@ type AppConfig = {
     appId: string;
     cluster: string;
   };
+  adminUserIds: string[];
 };
 
 export default appConfig as AppConfig;

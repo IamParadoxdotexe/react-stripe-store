@@ -3,19 +3,21 @@
   flex-direction: column;
   gap: 3px;
 
-  &:not(.disabled):hover {
-    .input__field {
-      box-shadow: 0 0 0 2px color-light(3);
-    }
-  }
-
-  &:focus-within {
-    label {
-      color: color-primary(5);
+  &:not(.disabled) {
+    &:hover {
+      .input__field {
+        box-shadow: 0 0 0 2px color-light(3);
+      }
     }
 
-    .input__field {
-      box-shadow: 0 0 0 2px color-primary(5);
+    &:focus-within {
+      label {
+        color: color-primary(5);
+      }
+
+      .input__field {
+        box-shadow: 0 0 0 2px color-primary(5);
+      }
     }
   }
 

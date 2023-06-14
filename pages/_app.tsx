@@ -1,4 +1,5 @@
 import '@/styles/global.scss';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@emotion/react';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
@@ -55,20 +56,22 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <main className={`${inter.className}`}>
-        <NavBar />
-        <Component {...pageProps} />
+    <ClerkProvider {...pageProps}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <main className={`${inter.className}`}>
+          <NavBar />
+          <Component {...pageProps} />
 
-        {Drawer}
+          {Drawer}
 
-        <Grow in={cart.count > 0}>
-          <div style={{ position: 'fixed', bottom: 24, right: 24 }}>
-            <CartButton type="fab" />
-          </div>
-        </Grow>
-      </main>
-    </ThemeProvider>
+          <Grow in={cart.count > 0}>
+            <div style={{ position: 'fixed', bottom: 24, right: 24 }}>
+              <CartButton type="fab" />
+            </div>
+          </Grow>
+        </main>
+      </ThemeProvider>
+    </ClerkProvider>
   );
 }

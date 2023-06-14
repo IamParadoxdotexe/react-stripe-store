@@ -27,7 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const products: Product[] = rawProducts.map(parseRawProduct);
 
-  res.status(200).json(products);
+  res.status(200).json({
+    products
+  });
 }
 
 export const parseRawProduct = (rawProduct: Stripe.Product) => {

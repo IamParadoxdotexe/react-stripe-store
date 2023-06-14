@@ -15,5 +15,6 @@
   "pusher": {
     "appId": "1584134",
     "cluster": "us2"
-  }
+  },
+  "adminUserIds": ["user_2RAgjEEZvejfRzD23jlH37StPDd"]
 }

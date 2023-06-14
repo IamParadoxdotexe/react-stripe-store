@@ -14,6 +14,7 @@
     "listen": "stripe listen --forward-to localhost:3000/api/stripe/webhooks"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.21.1",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/lab": "^5.0.0-alpha.126",

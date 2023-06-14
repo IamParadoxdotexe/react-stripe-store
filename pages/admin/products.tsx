@@ -96,22 +96,6 @@ export default function AdminProducts() {
     });
   };
 
-  const renderProducts = (products: Product[], skeletons: number) => (
-    <>
-      {!loading &&
-        products.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            variant="horizontal"
-            readOnly
-            onClick={() => onProductClick(product)}
-          />
-        ))}
-      {loading && generateKeys(skeletons).map(i => <ProductCard key={i} variant="horizontal" />)}
-    </>
-  );
-
   return (
     <div className={styles.products}>
       <div className={styles.products__header}>
@@ -128,7 +112,18 @@ export default function AdminProducts() {
       </div>
 
       <div className={styles.products__grid}>
-        {renderProducts(products, 20)}
+        {!loading &&
+          products.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              variant="horizontal"
+              readOnly
+              onClick={() => onProductClick(product)}
+            />
+          ))}
+
+        {loading && generateKeys(20).map(i => <ProductCard key={i} variant="horizontal" />)}
 
         {!loading && !products.length && (
           <Visual

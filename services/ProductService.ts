@@ -6,6 +6,7 @@ import { Product } from '@/pages/api/stripe/products';
 import { arrayOf } from '@/utils/functions/arrayOf';
 import { dictOf } from '@/utils/functions/dictOf';
 import { getUrl } from '@/utils/functions/getUrl';
+import { handleResponse } from '@/utils/functions/handleResponse';
 
 export type Products = {
   [id: string]: Product;
@@ -18,16 +19,22 @@ export const ProductService = new (class {
   public products = new BehaviorSubject<Products | undefined>(undefined);
 
   constructor() {
-    this.allProducts.subscribe(products =>
-      this.products.next(_.pickBy(products, product => product.active))
-    );
+    this.allProducts.subscribe(products => {
+      if (products) {
+        this.products.next(_.pickBy(products, product => product.active));
+      }
+    });
   }
 
   public load() {
     fetch(getUrl('/api/stripe/products'))
-      .then(res => res.json())
-      .then((products: Product[]) => {
-        this.allProducts.next(dictOf(products, 'id'));
+      .then(handleResponse)
+      .then(fetchResponse => {
+        if (fetchResponse.isOk() && fetchResponse.body?.products) {
+          this.allProducts.next(dictOf(fetchResponse.body?.products, 'id'));
+        } else {
+          this.allProducts.next({});
+        }
       });
   }
 

@@ -8,9 +8,8 @@ import styles from './home.module.scss';
 
 export default function Home() {
   const _products = useServiceState(ProductService.products);
-
   const products = arrayOf(_products);
-  const loading = !products.length;
+  const loading = !_products;
 
   return (
     <div className={styles.home}>
