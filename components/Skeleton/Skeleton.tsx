@@ -1,4 +1,5 @@
-import React, { CSSProperties, ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import React, { CSSProperties, ReactNode, useRef, useState } from 'react';
+import { useIsomorphicLayoutEffect } from '@/utils/hooks/useIsomorphicLayoutEffect';
 import styles from './Skeleton.module.scss';
 
 type SkeletonProps = {
@@ -16,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = (props: SkeletonProps) => {
   const [skeletonStyle, setSkeletonStyle] = useState<CSSProperties>();
   const [skeletonContentStyle, setSkeletonContentStyle] = useState<CSSProperties>();
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const style = ref.current ? window.getComputedStyle(ref.current) : undefined;
 
     if (style) {

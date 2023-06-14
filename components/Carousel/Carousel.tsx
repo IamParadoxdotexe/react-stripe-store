@@ -1,6 +1,5 @@
 import React, {
   ReactNode,
-  useLayoutEffect,
   useState,
   TouchEvent as ReactTouchEvent,
   useRef,
@@ -8,6 +7,7 @@ import React, {
 } from 'react';
 import { Subscription } from 'rxjs';
 import { easeSpeed } from '@/utils/functions/easeSpeed';
+import { useIsomorphicLayoutEffect } from '@/utils/hooks/useIsomorphicLayoutEffect';
 import { IconButton } from '@mui/material';
 import { Skeleton } from '@/components/Skeleton';
 import LeftArrowIcon from '@/icons/ArrowLeft.svg';
@@ -163,21 +163,21 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     return [touch.clientX, touch.clientY];
   };
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     onResize();
     window.addEventListener('resize', onResize);
 
     return () => window.removeEventListener('resize', onResize);
   }, [carouselRef, props.children]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     // manually bind onTouchMove to support preventDefault
     if (ref.current) {
       ref.current.ontouchmove = event => onDrag(event);
     }
   }, [ref, onDrag]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (isDragging) {
       // poll last X position to calculate speed
       setPollingInterval(
