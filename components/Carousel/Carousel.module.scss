@@ -6,17 +6,6 @@
   flex-direction: column;
   gap: 12px;
 
-  .carousel__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 40px;
-
-    .header__title {
-      @include text-h3;
-    }
-  }
-
   .carousel__items {
     display: flex;
     gap: 48px;

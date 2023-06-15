@@ -1,0 +1,13 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .header__title {
+    @include text-h3;
+  }
+
+  .header__subtitle {
+    @include text-h6;
+  }
+}

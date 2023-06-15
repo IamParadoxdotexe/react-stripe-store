@@ -1,10 +1,9 @@
-.search {
-  @include mix-framework;
+.grid {
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  .search__grid {
+  .grid__elements {
     display: flex;
     flex-wrap: wrap;
     gap: 48px;

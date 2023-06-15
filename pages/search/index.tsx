@@ -2,7 +2,9 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Product } from '@/pages/api/stripe/products';
 import { generateKeys } from '@/utils/functions/generateKeys';
+import { useServiceState } from '@/utils/hooks/useServiceState';
 import { ProductService } from '@/services/ProductService';
+import { Grid } from '@/components/Grid';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
 import { Visual } from '@/components/Visual';
 import NoResultsVisual from '@/visuals/NoResults.svg';
@@ -10,36 +12,38 @@ import styles from './search.module.scss';
 
 export default function SearchPage() {
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>();
+
+  const _products = useServiceState(ProductService.products);
+  const [searchProducts, setSearchProducts] = useState<Product[]>();
+  const loading = !searchProducts;
 
   const query = router.query.query as string;
 
   useEffect(() => {
-    if (query) {
-      setProducts(ProductService.search(query));
+    if (_products && query) {
+      setSearchProducts(ProductService.search(query));
     }
-  }, [query]);
+  }, [_products, query]);
 
   return (
     <div className={styles.search}>
-      <div className={styles.search__header}>
-        <div className={styles.header__title}>Search Results</div>
-        <div className={styles.header__subtitle}>
-          {products?.length} results found matching "{query}"
-        </div>
-      </div>
-      <div className={styles.search__grid}>
-        {products && products.map(product => <ProductCard key={product.id} product={product} />)}
-        {!products && generateKeys(20).map(i => <ProductCard key={i} />)}
+      <Grid
+        title="Search Results"
+        subtitle={`${searchProducts?.length ?? 0} results found matching "${query ?? ''}"`}
+        loading={loading}
+      >
+        {searchProducts &&
+          searchProducts.map(product => <ProductCard key={product.id} product={product} />)}
+        {loading && generateKeys(8).map(i => <ProductCard key={i} />)}
 
-        {products && !products.length && (
+        {searchProducts && !searchProducts.length && (
           <Visual
             visual={<NoResultsVisual />}
             title="No results found!"
             subtitle='Try searching for something less specific, like "cup".'
           />
         )}
-      </div>
+      </Grid>
     </div>
   );
 }

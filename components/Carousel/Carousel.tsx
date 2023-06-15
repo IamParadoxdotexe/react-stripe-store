@@ -1,20 +1,15 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useIsomorphicLayoutEffect } from '@/utils/hooks/useIsomorphicLayoutEffect';
+import { ContentProps } from '@/utils/types/Content';
 import { IconButton } from '@mui/material';
-import { Skeleton } from '@/components/Skeleton';
+import { Header } from '@/components/Header';
 import LeftArrowIcon from '@/icons/ArrowLeft.svg';
 import RightArrowIcon from '@/icons/ArrowRight.svg';
 import styles from './Carousel.module.scss';
 
-type CarouselProps = {
-  title: string;
-  children?: ReactNode | ReactNode[];
-  loading?: boolean;
-};
-
 const INDICATOR_WIDTH = 150;
 
-export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
+export const Carousel: React.FC<ContentProps> = (props: ContentProps) => {
   const [offset, setOffset] = useState(0);
   const [goalOffset, setGoalOffset] = useState(0);
   const [maxOffset, setMaxOffset] = useState(0);
@@ -93,19 +88,24 @@ export const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     carouselWidth && carouselItemsWidth && (carouselWidth / carouselItemsWidth) * INDICATOR_WIDTH;
   const sliderOffset = carouselWidth && offset && (offset / carouselItemsWidth) * INDICATOR_WIDTH;
 
+  const showCarouselControls = maxOffset > 0 && !props.loading;
+
   return (
     <div ref={setCarouselRef} className={styles.carousel}>
-      <div className={styles.carousel__header}>
-        <Skeleton className={styles.header__title} loading={props.loading}>
-          {props.title}
-        </Skeleton>
-        {maxOffset > 0 && !props.loading && (
-          <div>
-            <CarouselControl direction="left" />
-            <CarouselControl direction="right" />
-          </div>
-        )}
-      </div>
+      <Header
+        title={props.title}
+        subtitle={props.subtitle}
+        loading={props.loading}
+        right={
+          showCarouselControls && (
+            <div>
+              <CarouselControl direction="left" />
+              <CarouselControl direction="right" />
+            </div>
+          )
+        }
+        style={{ height: 40 }}
+      />
 
       <div ref={setCarouselItemsRef} className={styles.carousel__items}>
         {props.children}
