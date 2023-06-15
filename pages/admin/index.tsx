@@ -10,11 +10,11 @@ import { Button } from '@mui/material';
 import { ProductCard } from '@/components/ProductCard';
 import { Visual } from '@/components/Visual';
 import AddProductsVisual from '@/visuals/AddProducts.svg';
-import styles from './products.module.scss';
+import styles from './admin.module.scss';
 
 // const CELL_REGEX = /^([A-Z]+)([\d]+)$/;
 
-export default function AdminProducts() {
+export default function AdminPage() {
   const _products = useServiceState(ProductService.products);
   const loading = !_products;
 

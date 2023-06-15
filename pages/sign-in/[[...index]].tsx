@@ -15,7 +15,7 @@ export default function SignInPage() {
 
   // redirect to admin page if already signed in
   if (isAdmin) {
-    router.push('/admin/products');
+    router.push('/admin');
     return null;
   }
 
@@ -30,10 +30,6 @@ export default function SignInPage() {
             elements: {
               card: {
                 boxShadow: 'none'
-              },
-              footer: {
-                // disable sign up
-                display: 'none'
               }
             }
           }}

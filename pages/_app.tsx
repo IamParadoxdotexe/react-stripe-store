@@ -51,8 +51,6 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     PusherService.bind();
     ProductService.load();
-
-    return () => PusherService.unbind();
   }, []);
 
   return (

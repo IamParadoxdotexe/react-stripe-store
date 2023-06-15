@@ -6,7 +6,7 @@ import { Carousel } from '@/components/Carousel';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
 import styles from './home.module.scss';
 
-export default function Home() {
+export default function HomePage() {
   const _products = useServiceState(ProductService.products);
   const products = arrayOf(_products);
   const loading = !_products;

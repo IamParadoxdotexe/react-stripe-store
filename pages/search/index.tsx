@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { Product } from '@/pages/api/stripe/products';
 import { generateKeys } from '@/utils/functions/generateKeys';
 import { ProductService } from '@/services/ProductService';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
 import { Visual } from '@/components/Visual';
 import NoResultsVisual from '@/visuals/NoResults.svg';
-import { Product } from './api/stripe/products';
 import styles from './search.module.scss';
 
-export default function Search() {
+export default function SearchPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>();
 
